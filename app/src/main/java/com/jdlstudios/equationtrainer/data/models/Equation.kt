@@ -4,8 +4,8 @@ import com.jdlstudios.equationtrainer.data.local.entities.EquationEntity
 
 data class Equation(
     val equation: String,
-    val answer: String,
-    val answerUser: String,
+    val answer: Int,
+    val answerUser: Int,
     val date: String,
     val isCorrect: Boolean
 ) {
