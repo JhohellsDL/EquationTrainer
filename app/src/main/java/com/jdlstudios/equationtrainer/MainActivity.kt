@@ -46,11 +46,24 @@ import com.jdlstudios.equationtrainer.components.AppTabRow
 import com.jdlstudios.equationtrainer.ui.configuration.Configuration
 import com.jdlstudios.equationtrainer.ui.home.Home
 import com.jdlstudios.equationtrainer.ui.navigation.appTabRowScreens
+import com.jdlstudios.equationtrainer.ui.navigation.Home
+import com.jdlstudios.equationtrainer.ui.navigation.Configuration
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            Surface (
+                color = MaterialTheme.colorScheme.background
+            ) {
+                val navigationController = rememberNavController()
+                NavHost(
+                    navController = navigationController,
+                    startDestination = Home.route
+                ){
+                    composable(Home.route){Home(navigationController)}
+                }
+            }
             EquationApp()
         }
     }
@@ -66,7 +79,7 @@ fun EquationAppdark() {
         val currentDestination = currentBackStack?.destination
         val currentScreen = appTabRowScreens.find {
             it.route == currentDestination?.route
-        } ?: com.jdlstudios.equationtrainer.ui.navigation.Home
+        } ?: Home
         Scaffold(
             topBar = {
                 AppTabRow(
@@ -81,13 +94,13 @@ fun EquationAppdark() {
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = com.jdlstudios.equationtrainer.ui.navigation.Home.route,
+                startDestination = Home.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable(route = com.jdlstudios.equationtrainer.ui.navigation.Home.route) {
-                    Home()
+                composable(route = Home.route) {
+                    Home(navController)
                 }
-                composable(route = com.jdlstudios.equationtrainer.ui.navigation.Configuration.route) {
+                composable(route = Configuration.route) {
                     Configuration()
                 }
             }
@@ -98,6 +111,8 @@ fun EquationAppdark() {
 @Preview
 @Composable
 fun EquationApp() {
+
+
     AppTheme {
 
         val navController = rememberNavController()
@@ -105,7 +120,7 @@ fun EquationApp() {
         val currentDestination = currentBackStack?.destination
         val currentScreen = appTabRowScreens.find {
             it.route == currentDestination?.route
-        } ?: com.jdlstudios.equationtrainer.ui.navigation.Home
+        } ?: Home
         Scaffold(
             topBar = {
                 AppTabRow(
@@ -120,13 +135,13 @@ fun EquationApp() {
         ) { innerPadding ->
             NavHost(
                 navController = navController,
-                startDestination = com.jdlstudios.equationtrainer.ui.navigation.Home.route,
+                startDestination = Home.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable(route = com.jdlstudios.equationtrainer.ui.navigation.Home.route) {
-                    Home()
+                composable(route = Home.route) {
+                    Home(navController)
                 }
-                composable(route = com.jdlstudios.equationtrainer.ui.navigation.Configuration.route) {
+                composable(route = Configuration.route) {
                     Configuration()
                 }
             }
