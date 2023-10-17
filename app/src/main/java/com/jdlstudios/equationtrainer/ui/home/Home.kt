@@ -30,7 +30,7 @@ import com.jdlstudios.equationtrainer.ui.navigation.Configuration
 @Composable
 fun DarkPreview() {
     AppTheme {
-
+        Home(navHostController = rememberNavController())
     }
 }
 
