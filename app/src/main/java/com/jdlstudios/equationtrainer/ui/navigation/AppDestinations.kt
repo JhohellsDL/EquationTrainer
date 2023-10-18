@@ -1,6 +1,7 @@
 package com.jdlstudios.equationtrainer.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -18,6 +19,11 @@ object Home : AppDestination {
 object Configuration : AppDestination {
     override val icon = Icons.Filled.FitnessCenter
     override val route = "configuration"
+}
+
+object ExercisesEasy : AppDestination {
+    override val icon = Icons.Filled.AccessTime
+    override val route = "exercisesEasy"
 }
 
 // Screens to be displayed in the top RallyTabRow

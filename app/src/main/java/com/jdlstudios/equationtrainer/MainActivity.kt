@@ -44,10 +44,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
 import com.jdlstudios.equationtrainer.components.AppTabRow
 import com.jdlstudios.equationtrainer.ui.configuration.Configuration
+import com.jdlstudios.equationtrainer.ui.exercises.ExerciseEasy
 import com.jdlstudios.equationtrainer.ui.home.Home
 import com.jdlstudios.equationtrainer.ui.navigation.appTabRowScreens
 import com.jdlstudios.equationtrainer.ui.navigation.Home
 import com.jdlstudios.equationtrainer.ui.navigation.Configuration
+import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,7 +103,10 @@ fun EquationAppdark() {
                     Home(navController)
                 }
                 composable(route = Configuration.route) {
-                    Configuration()
+                    Configuration(navController)
+                }
+                composable(route = ExercisesEasy.route) {
+                    ExerciseEasy()
                 }
             }
         }
@@ -142,7 +147,10 @@ fun EquationApp() {
                     Home(navController)
                 }
                 composable(route = Configuration.route) {
-                    Configuration()
+                    Configuration(navController)
+                }
+                composable(route = ExercisesEasy.route) {
+                    ExerciseEasy()
                 }
             }
         }

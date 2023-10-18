@@ -1,10 +1,10 @@
 package com.jdlstudios.equationtrainer.ui.configuration
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,38 +40,58 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jdlstudios.equationtrainer.R
-import kotlin.math.absoluteValue
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.compose.AppTheme
+import com.jdlstudios.equationtrainer.navigateSingleTopTo
+import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 
-@Preview
+@Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun Configuration(modifier: Modifier = Modifier) {
+fun DarkPreview() {
+    AppTheme {
+        Configuration(navHostController = rememberNavController())
+    }
+}
+@Composable
+fun Configuration(
+    navHostController: NavHostController
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = "Selecciona el nivel de dificultad",
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(vertical = 16.dp)
-        )
-        RadioGroupDifficulty()
-        Text(
-            text = "Selecciona la cantidad de ejercicios",
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 32.dp, bottom = 12.dp)
-        )
-        CardSelectedQuantity()
+        ) {
+            Text(
+                text = "Selecciona el nivel de dificultad",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 16.dp)
+            )
+            CardDifficulty()
+            Text(
+                text = "Selecciona la cantidad de ejercicios",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 32.dp, bottom = 12.dp)
+            )
+            CardSelectedQuantity()
+        }
         Button(
-            onClick = { }
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(24.dp)
+                .fillMaxWidth(),
+            onClick = {
+                navHostController.navigateSingleTopTo(ExercisesEasy.route)
+                Log.d("asdasd", "asdsadasd")
+            },
         ) {
             Text(text = "COMENZAR")
         }
@@ -79,8 +100,11 @@ fun Configuration(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun CardDifficulty() {
-    ElevatedCard {
+fun CardDifficulty(modifier: Modifier = Modifier) {
+    ElevatedCard(
+        modifier = modifier.padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp, pressedElevation = 2.dp)
+    ) {
         RadioGroupDifficulty()
     }
 }
@@ -89,7 +113,8 @@ fun CardDifficulty() {
 @Composable
 fun CardSelectedQuantity(modifier: Modifier = Modifier) {
     ElevatedCard(
-        modifier = modifier.padding(16.dp)
+        modifier = modifier.padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp, pressedElevation = 2.dp)
     ) {
         SliderQuantityExercises()
     }

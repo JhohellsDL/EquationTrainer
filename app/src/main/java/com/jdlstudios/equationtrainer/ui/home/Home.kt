@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
 import com.jdlstudios.equationtrainer.R
+import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.navigation.Configuration
 
 
@@ -69,7 +70,7 @@ fun Home(
             )
             Button(
                 onClick = {
-                    navHostController.navigate(Configuration.route)
+                    navHostController.navigateSingleTopTo(Configuration.route)
                     Log.d("asdasd", "asdsadasd")
                 },
                 modifier = Modifier
