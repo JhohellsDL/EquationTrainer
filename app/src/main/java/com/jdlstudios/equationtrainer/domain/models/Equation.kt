@@ -6,6 +6,7 @@ data class Equation(
     val equation: String,
     val answer: Int,
     val answerUser: Int,
+    val time: Int,
     val date: String,
     val isCorrect: Boolean
 ) {
@@ -14,6 +15,7 @@ data class Equation(
             equation = equation,
             answer = answer,
             answerUser = answerUser,
+            time = time,
             date = date,
             isCorrect = isCorrect
         )

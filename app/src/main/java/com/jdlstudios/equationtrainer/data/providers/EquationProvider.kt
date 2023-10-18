@@ -28,6 +28,7 @@ class EquationProvider {
                 equation = equation,
                 answer = x,
                 answerUser = 0,
+                time = 0,
                 date = "",
                 isCorrect = false
             )
