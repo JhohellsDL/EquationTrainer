@@ -40,11 +40,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.compose.AppTheme
+import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
+import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 
@@ -55,6 +57,7 @@ fun DarkPreview() {
         Configuration(navHostController = rememberNavController())
     }
 }
+
 @Composable
 fun Configuration(
     navHostController: NavHostController
@@ -63,30 +66,37 @@ fun Configuration(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
         ) {
             Text(
                 text = "Selecciona el nivel de dificultad",
+                style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 16.dp)
+                    .padding(16.dp),
+                textAlign = TextAlign.Center
             )
             CardDifficulty()
             Text(
                 text = "Selecciona la cantidad de ejercicios",
+                style = MaterialTheme.typography.titleSmall,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 32.dp, bottom = 12.dp)
+                    .padding(horizontal = 16.dp)
             )
             CardSelectedQuantity()
         }
         Button(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(24.dp)
+                .padding(horizontal = 16.dp, vertical = 24.dp)
                 .fillMaxWidth(),
             onClick = {
                 navHostController.navigateSingleTopTo(ExercisesEasy.route)
@@ -101,9 +111,11 @@ fun Configuration(
 @Preview
 @Composable
 fun CardDifficulty(modifier: Modifier = Modifier) {
-    ElevatedCard(
+    Card(
         modifier = modifier.padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp, pressedElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 5.dp
+        )
     ) {
         RadioGroupDifficulty()
     }
@@ -112,9 +124,9 @@ fun CardDifficulty(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun CardSelectedQuantity(modifier: Modifier = Modifier) {
-    ElevatedCard(
+    Card(
         modifier = modifier.padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp, pressedElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         SliderQuantityExercises()
     }
@@ -123,28 +135,39 @@ fun CardSelectedQuantity(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun RadioGroupDifficulty() {
-    val radioOptions = listOf("Facil", "Intermedio", "Desafio", "Avanzado")
+    val radioOptions = listOf(
+        DifficultyLevel.Easy,
+        DifficultyLevel.Intermediate,
+        DifficultyLevel.Challenge,
+        DifficultyLevel.Advanced
+    )
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     Column(Modifier.selectableGroup()) {
-        radioOptions.forEach { text ->
+        radioOptions.forEach {
             Row(
                 Modifier
                     .fillMaxWidth()
                     .height(56.dp)
                     .selectable(
-                        selected = (text == selectedOption),
-                        onClick = { onOptionSelected(text) },
+                        selected = (it == selectedOption),
+                        onClick = {
+                            onOptionSelected(it)
+                            Log.d("asdasd", "test : ${it.description}")
+                        },
                         role = Role.RadioButton
                     )
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = null // null recommended for accessibility with screenreaders
+                    selected = (it == selectedOption),
+                    onClick = {
+                        onOptionSelected(it)
+                        Log.d("asdasd", "test : ${it.description}")
+                    } // null recommended for accessibility with screenreaders
                 )
                 Text(
-                    text = text,
+                    text = it.description,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp)
                 )
@@ -160,13 +183,16 @@ fun SliderQuantityExercises(modifier: Modifier = Modifier) {
     Column {
         Text(
             text = sliderPosition.toInt().toString(),
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(vertical = 32.dp)
+                .padding(top = 32.dp)
         )
+        Log.d("asdasd", "test : $sliderPosition")
         Slider(
-            modifier = modifier.padding(16.dp),
+            modifier = modifier
+                .padding(horizontal = 32.dp)
+                .padding(vertical = 20.dp),
             value = sliderPosition,
             onValueChange = { sliderPosition = it },
             colors = SliderDefaults.colors(
