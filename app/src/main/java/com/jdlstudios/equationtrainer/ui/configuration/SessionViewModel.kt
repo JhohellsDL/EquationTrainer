@@ -15,6 +15,9 @@ class SessionViewModel : ViewModel() {
     private val _uiSessionState = MutableStateFlow(Session())
     val uiSessionState: StateFlow<Session> = _uiSessionState.asStateFlow()
 
+    private val _uiEquationState = MutableStateFlow(Equation())
+    val uiEquationState: StateFlow<Equation> = _uiEquationState.asStateFlow()
+
     private lateinit var currentListExercises: List<Equation>
     private lateinit var currentEquation: Equation
     private var listExercises: MutableList<Equation> = mutableListOf()
@@ -23,6 +26,15 @@ class SessionViewModel : ViewModel() {
         currentEquation = EquationProvider.generateRandomEquation()
         listExercises.add(currentEquation)
         return currentEquation
+    }
+
+    fun resetSession() {
+        listExercises.clear()
+        _uiEquationState.value = pickRandomEquation()
+    }
+
+    init {
+        resetSession()
     }
 
     fun updateDifficulty(difficultyLevel: DifficultyLevel) {

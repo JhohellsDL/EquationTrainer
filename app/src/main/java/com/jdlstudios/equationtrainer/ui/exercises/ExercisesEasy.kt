@@ -27,9 +27,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +42,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jdlstudios.equationtrainer.R
+import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 import kotlinx.coroutines.delay
 
@@ -59,59 +61,24 @@ fun PreviewDark(modifier: Modifier = Modifier.fillMaxSize()) {
 
 @Preview
 @Composable
-fun ExerciseEasy(modifier: Modifier = Modifier) {
+fun ExerciseEasy(
+    sessionViewModel: SessionViewModel = viewModel()
+) {
+    val sessionState by sessionViewModel.uiEquationState.collectAsState()
 
     Surface(
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Column {
-            BarCountExercises(modifier = modifier)
             CardExercise(
                 onUserGuessChanged = {
                     Log.d("asdasd", "asd: $it")
                 },
-                modifier = modifier
+                currentEquation = sessionState.equation,
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
             //CollectionAnswers()
         }
-    }
-}
-
-//@Preview
-@Composable
-fun BarCountExercises(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        QuantityExercises()
-        RemainingExercises()
-    }
-}
-
-
-//@Preview
-@Composable
-fun QuantityExercises(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(text = "23")
-        Text(text = "Cantidad ejercicios")
-    }
-}
-
-//@Preview
-@Composable
-fun RemainingExercises(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            modifier = modifier.align(Alignment.End),
-            text = "23"
-        )
-        Text(text = "Ejercicios restantes")
     }
 }
 
@@ -159,6 +126,7 @@ fun Timer() {
 @Composable
 fun CardExercise(
     onUserGuessChanged: (String) -> Unit,
+    currentEquation: String,
     modifier: Modifier = Modifier
 ) {
     val mediumPadding = 16.dp
@@ -183,7 +151,7 @@ fun CardExercise(
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
-                text = "2x + 4 = 5",
+                text = currentEquation,
                 style = MaterialTheme.typography.displayMedium
             )
             Text(
@@ -205,7 +173,7 @@ fun CardExercise(
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { //onKeyboardDone()
-                 }
+                    }
                 )
             )
         }
@@ -241,20 +209,20 @@ fun CardAnswer(
 
 @Preview
 @Composable
-fun PreviewCardAnswer(){
+fun PreviewCardAnswer() {
     CardAnswer(answer = 3)
 }
 
 @Preview
 @Composable
-fun CollectionAnswers(modifier: Modifier = Modifier){
+fun CollectionAnswers(modifier: Modifier = Modifier) {
     LazyHorizontalGrid(
         rows = GridCells.Fixed(2),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.height(250.dp)
-    ){
+    ) {
         items(listAnswers) {
             CardAnswer(it)
         }
@@ -262,5 +230,5 @@ fun CollectionAnswers(modifier: Modifier = Modifier){
 }
 
 private val listAnswers = listOf<Int>(
-    2,4,5,7
+    2, 4, 5, 7
 )
