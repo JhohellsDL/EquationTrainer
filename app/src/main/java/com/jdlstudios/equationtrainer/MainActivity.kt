@@ -36,12 +36,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.compose.AppTheme
+import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 import com.jdlstudios.equationtrainer.components.AppTabRow
 import com.jdlstudios.equationtrainer.ui.configuration.Configuration
 import com.jdlstudios.equationtrainer.ui.exercises.ExerciseEasy
@@ -55,21 +56,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Surface (
+            Surface(
                 color = MaterialTheme.colorScheme.background
             ) {
                 val navigationController = rememberNavController()
                 NavHost(
                     navController = navigationController,
                     startDestination = Home.route
-                ){
-                    composable(Home.route){Home(navigationController)}
+                ) {
+                    composable(Home.route) { Home(navigationController) }
                 }
             }
             EquationApp()
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
@@ -103,7 +105,7 @@ fun EquationAppdark() {
                     Home(navController)
                 }
                 composable(route = Configuration.route) {
-                    Configuration(navController)
+                    Configuration(sessionViewModel = viewModel(), navController)
                 }
                 composable(route = ExercisesEasy.route) {
                     ExerciseEasy()
@@ -112,14 +114,12 @@ fun EquationAppdark() {
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun EquationApp() {
-
-
     AppTheme {
-
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
@@ -147,7 +147,7 @@ fun EquationApp() {
                     Home(navController)
                 }
                 composable(route = Configuration.route) {
-                    Configuration(navController)
+                    Configuration(sessionViewModel = viewModel(), navController)
                 }
                 composable(route = ExercisesEasy.route) {
                     ExerciseEasy()
