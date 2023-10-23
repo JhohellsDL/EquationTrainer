@@ -30,8 +30,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jdlstudios.equationtrainer.ui.navigation.AppDestination
+import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
+import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 import java.util.Locale
-
 
 @Composable
 fun AppTabRow(
@@ -46,12 +47,19 @@ fun AppTabRow(
     ) {
         Row(Modifier.selectableGroup()) {
             allScreens.forEach { screen ->
-                AppTab(
-                    icon = screen.icon,
-                    text = screen.route,
-                    onSelected = { onTabSelected(screen) },
-                    selected = currentScreen == screen
-                )
+                if (screen.route != ExercisesEasy.route) {
+                    val textRoute: String = if (screen.route == ConfigurationSession.route) {
+                        "Session configuration"
+                    } else {
+                        screen.route
+                    }
+                    AppTab(
+                        icon = screen.icon,
+                        text = textRoute,
+                        onSelected = { onTabSelected(screen) },
+                        selected = currentScreen == screen
+                    )
+                }
             }
         }
     }

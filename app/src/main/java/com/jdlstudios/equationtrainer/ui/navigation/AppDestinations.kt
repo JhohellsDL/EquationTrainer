@@ -27,4 +27,4 @@ object ExercisesEasy : AppDestination {
 }
 
 // Screens to be displayed in the top RallyTabRow
-val appTabRowScreens = listOf(Home, ConfigurationSession)
+val appTabRowScreens = listOf(Home, ConfigurationSession, ExercisesEasy)
