@@ -16,9 +16,9 @@ object Home : AppDestination {
     override val route = "home"
 }
 
-object Configuration : AppDestination {
+object ConfigurationSession : AppDestination {
     override val icon = Icons.Filled.FitnessCenter
-    override val route = "configuration"
+    override val route = "configurationSession"
 }
 
 object ExercisesEasy : AppDestination {
@@ -27,4 +27,4 @@ object ExercisesEasy : AppDestination {
 }
 
 // Screens to be displayed in the top RallyTabRow
-val appTabRowScreens = listOf(Home, Configuration)
+val appTabRowScreens = listOf(Home, ConfigurationSession)

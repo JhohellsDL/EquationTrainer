@@ -1,7 +1,6 @@
 package com.jdlstudios.equationtrainer.ui.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -23,10 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 import com.jdlstudios.equationtrainer.R
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
-import com.jdlstudios.equationtrainer.ui.navigation.Configuration
+import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
+import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 
 
 @Preview(uiMode = UI_MODE_NIGHT_YES)
@@ -84,8 +83,7 @@ fun Home(
             )
             Button(
                 onClick = {
-                    navHostController.navigateSingleTopTo(Configuration.route)
-                    Log.d("asdasd", "asdsadasd")
+                    navHostController.navigateSingleTopTo(ConfigurationSession.route)
                 },
                 modifier = Modifier
                     .padding(top = 54.dp)

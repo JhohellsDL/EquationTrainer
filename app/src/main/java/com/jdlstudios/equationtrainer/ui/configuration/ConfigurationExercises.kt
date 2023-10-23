@@ -19,7 +19,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,17 +44,18 @@ import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 @Composable
 fun DarkPreview() {
     AppTheme {
-        Configuration(navHostController = rememberNavController())
+        ConfigurationSession(
+            sessionViewModel = viewModel(),
+            navHostController = rememberNavController()
+        )
     }
 }
 
 @Composable
-fun Configuration(
-    sessionViewModel: SessionViewModel = viewModel(),
+fun ConfigurationSession(
+    sessionViewModel: SessionViewModel,
     navHostController: NavHostController
 ) {
-    // val sessionState by sessionViewModel.uiSessionState.collectAsState()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +95,6 @@ fun Configuration(
             CardSelectedQuantity(
                 onNumberOfExercises = {
                     sessionViewModel.updateNumberExercises(it)
-                    Log.d("asdasd", "testeseess : $it")
                 }
             )
         }
@@ -105,8 +104,8 @@ fun Configuration(
                 .padding(horizontal = 16.dp, vertical = 24.dp)
                 .fillMaxWidth(),
             onClick = {
+                sessionViewModel.resetSession()
                 navHostController.navigateSingleTopTo(ExercisesEasy.route)
-                Log.d("asdasd", "asdsadasd")
             },
         ) {
             Text(text = "COMENZAR")
@@ -156,8 +155,7 @@ fun CardDifficulty(
                         onClick = {
                             onOptionSelected(it)
                             onDifficultyLevel(it)
-                            Log.d("asdasd", "test : ${it.description}")
-                        } // null recommended for accessibility with screenreaders
+                        }
                     )
                     Text(
                         text = it.description,
@@ -189,7 +187,6 @@ fun CardSelectedQuantity(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 32.dp)
             )
-            Log.d("asdasd", "test : $sliderPosition")
             Slider(
                 modifier = modifier
                     .padding(horizontal = 32.dp)
@@ -199,11 +196,6 @@ fun CardSelectedQuantity(
                     sliderPosition = it
                     onNumberOfExercises(it.toInt())
                 },
-                colors = SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.secondary,
-                    activeTrackColor = MaterialTheme.colorScheme.secondary,
-                    inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                ),
                 steps = 18,
                 valueRange = 0f..20f
             )

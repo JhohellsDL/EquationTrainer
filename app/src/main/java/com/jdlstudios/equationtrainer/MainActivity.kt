@@ -44,12 +44,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 import com.jdlstudios.equationtrainer.components.AppTabRow
-import com.jdlstudios.equationtrainer.ui.configuration.Configuration
+import com.jdlstudios.equationtrainer.ui.configuration.ConfigurationSession
+import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.exercises.ExerciseEasy
 import com.jdlstudios.equationtrainer.ui.home.Home
 import com.jdlstudios.equationtrainer.ui.navigation.appTabRowScreens
 import com.jdlstudios.equationtrainer.ui.navigation.Home
-import com.jdlstudios.equationtrainer.ui.navigation.Configuration
+import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
 import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 
 class MainActivity : ComponentActivity() {
@@ -77,13 +78,14 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun EquationAppdark() {
     AppTheme {
-
+        val sessionViewModel: SessionViewModel = viewModel()
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
         val currentScreen = appTabRowScreens.find {
             it.route == currentDestination?.route
         } ?: Home
+
         Scaffold(
             topBar = {
                 AppTabRow(
@@ -104,11 +106,17 @@ fun EquationAppdark() {
                 composable(route = Home.route) {
                     Home(navController)
                 }
-                composable(route = Configuration.route) {
-                    Configuration(sessionViewModel = viewModel(), navController)
+                composable(route = ConfigurationSession.route) {
+                    ConfigurationSession(
+                        sessionViewModel = sessionViewModel,
+                        navHostController = navController
+                    )
                 }
                 composable(route = ExercisesEasy.route) {
-                    ExerciseEasy()
+                    ExerciseEasy(
+                        sessionViewModel = sessionViewModel,
+                        navHostController = navController
+                    )
                 }
             }
         }
@@ -120,6 +128,7 @@ fun EquationAppdark() {
 @Composable
 fun EquationApp() {
     AppTheme {
+        val sessionViewModel: SessionViewModel = viewModel()
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
@@ -146,11 +155,17 @@ fun EquationApp() {
                 composable(route = Home.route) {
                     Home(navController)
                 }
-                composable(route = Configuration.route) {
-                    Configuration(sessionViewModel = viewModel(), navController)
+                composable(route = ConfigurationSession.route) {
+                    ConfigurationSession(
+                        sessionViewModel = sessionViewModel,
+                        navHostController = navController
+                    )
                 }
                 composable(route = ExercisesEasy.route) {
-                    ExerciseEasy()
+                    ExerciseEasy(
+                        sessionViewModel = sessionViewModel,
+                        navHostController = navController
+                    )
                 }
             }
         }
