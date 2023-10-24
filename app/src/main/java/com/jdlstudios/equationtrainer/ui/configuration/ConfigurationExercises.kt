@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,7 +22,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,11 +60,19 @@ fun ConfigurationSession(
     sessionViewModel: SessionViewModel,
     navHostController: NavHostController
 ) {
+    val uiSessionState by sessionViewModel.uiSessionState.collectAsState()
+
+    var isCardVisible by remember { mutableStateOf(false) }
+    var isEnabledButton: Boolean = false
+    if (uiSessionState.numberOfExercises != 0) {
+        isEnabledButton = true
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(state = ScrollState(0), enabled = true),
+            .verticalScroll(rememberScrollState(), enabled = true),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
 
@@ -104,12 +116,23 @@ fun ConfigurationSession(
                 .padding(horizontal = 16.dp, vertical = 24.dp)
                 .fillMaxWidth(),
             onClick = {
+                isCardVisible = true
                 sessionViewModel.resetSession()
-                navHostController.navigateSingleTopTo(ExercisesEasy.route)
             },
+            enabled = isEnabledButton
         ) {
             Text(text = "COMENZAR")
         }
+    }
+
+    if (isCardVisible) {
+        PreviewSessionDialog(
+            difficulty = DifficultyLevel.values()[uiSessionState.difficulty],
+            nroExercises = uiSessionState.numberOfExercises,
+            onPlayAgain = { navHostController.navigateSingleTopTo(ExercisesEasy.route) },
+            onExit = { isCardVisible = false },
+            navHostController = navHostController
+        )
     }
 }
 
@@ -202,3 +225,47 @@ fun CardSelectedQuantity(
         }
     }
 }
+
+@Preview
+@Composable
+fun previewAlert2() {
+    PreviewSessionDialog(
+        difficulty = DifficultyLevel.Advanced,
+        nroExercises = 2,
+        onPlayAgain = {},
+        onExit = { },
+        navHostController = rememberNavController()
+    )
+}
+
+@Composable
+private fun PreviewSessionDialog(
+    difficulty: DifficultyLevel,
+    nroExercises: Int,
+    onPlayAgain: () -> Unit,
+    onExit: () -> Unit,
+    navHostController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = onExit,
+        title = { Text(text = "Estas iniciando una session!") },
+        text = { Text(text = "Dificultad: ${difficulty.description} \nNumero de ejercicios: $nroExercises") },
+        modifier = modifier,
+        dismissButton = {
+            TextButton(
+                onClick = onExit
+            ) {
+                Text(text = "Salir")
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onPlayAgain
+            ) {
+                Text(text = "Continuar")
+            }
+        }
+    )
+}
+

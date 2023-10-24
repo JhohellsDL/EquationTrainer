@@ -2,6 +2,7 @@ package com.jdlstudios.equationtrainer.ui.configuration
 
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -38,10 +39,9 @@ class SessionViewModel : ViewModel() {
     }
 
     fun resetSession() {
-        Log.d("asdasd", "update number ooooxx : ${_uiSessionState.value.numberOfExercises}")
         listExercises.clear()
         _uiEquationState.value = pickRandomEquation()
-        Log.d("asdasd", "update number ooooxx : ${_uiSessionState.value.numberOfExercises}")
+        Log.d("asdasd", "SessionViewModel - resetSession : list clear, new equation")
     }
 
     init {
@@ -66,7 +66,7 @@ class SessionViewModel : ViewModel() {
 
     fun updateNumberExercises(numberExercises: Int) {
         _uiSessionState.update {
-            Log.d("asdasd", "update number oooo")
+            Log.d("asdasd", "update number exercises $it")
             it.copy(
                 numberOfExercises = numberExercises
             )
