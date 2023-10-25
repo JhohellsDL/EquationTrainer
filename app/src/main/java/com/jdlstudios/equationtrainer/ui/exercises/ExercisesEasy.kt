@@ -8,8 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -91,10 +93,10 @@ fun ExerciseEasy(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val difficultyText = DifficultyLevel.values()[1]
-
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -105,9 +107,6 @@ fun ExerciseEasy(
                     exp = sessionState.exp
                 )
             }
-
-            Timer()
-
             CardExercise(
                 onUserAnswer = {
                     isErrorInputText = it == ""
@@ -166,7 +165,7 @@ fun ExerciseEasy(
                     },
                     onExit = {
                         sessionViewModel.updateGameOver(false)
-                        Log.d("asdasd","SESSION: ${sessionState.toFormattedString()}")
+                        Log.d("asdasd", "SESSION: ${sessionState.toFormattedString()}")
                         sessionViewModel.cleanSession()
                         navHostController.navigateSingleTopTo(Home.route)
                     }
@@ -180,9 +179,13 @@ fun ExerciseEasy(
 @Composable
 fun Timer() {
     val time = LocalTime.now()
-
     Text(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceTint)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         text = time.format(DateTimeFormatter.ofPattern("HH:mm:ss")),
+        color = MaterialTheme.colorScheme.onPrimary
     )
 }
 
@@ -219,11 +222,12 @@ fun CardExercise(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
+            Timer()
             Text(
                 text = currentEquation,
                 style = MaterialTheme.typography.displayMedium,
                 modifier = modifier
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 24.dp),
                 color = MaterialTheme.colorScheme.tertiary
             )
             Text(

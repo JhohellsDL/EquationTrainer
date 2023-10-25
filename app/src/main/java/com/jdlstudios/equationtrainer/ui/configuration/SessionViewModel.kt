@@ -25,7 +25,7 @@ class SessionViewModel : ViewModel() {
     private val _uiEquationState = MutableStateFlow(Equation())
     val uiEquationState: StateFlow<Equation> = _uiEquationState.asStateFlow()
 
-    private lateinit var currentListExercises: List<Equation>
+    private lateinit var currentListExercises: MutableList<Equation>
     private lateinit var currentEquation: Equation
     private var listExercises: MutableList<Equation> = mutableListOf()
 
@@ -45,6 +45,7 @@ class SessionViewModel : ViewModel() {
     }
 
     fun cleanSession() {
+        Log.d("asdasd", "lista de ecuacuones: $listExercises")
         _uiSessionState.value = Session()
     }
 
