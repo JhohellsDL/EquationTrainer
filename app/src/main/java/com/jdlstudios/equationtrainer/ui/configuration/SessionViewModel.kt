@@ -64,6 +64,15 @@ class SessionViewModel : ViewModel() {
         }
     }
 
+    fun updateTime(time: Int) {
+        Log.d("asdasd", "updateTtime: $time")
+        _uiEquationState.update {
+            it.copy(
+                time = time
+            )
+        }
+    }
+
     fun updateNumberExercises(numberExercises: Int) {
         _uiSessionState.update {
             Log.d("asdasd", "update number exercises $it")
@@ -74,11 +83,11 @@ class SessionViewModel : ViewModel() {
     }
 
     fun updateUserAnswer(answer: String) {
+        Log.d("asdasd", "update answer: $answer")
         userAnswer = answer
     }
 
     fun checkUserAnswer() {
-        Log.d("asdasd", "userAnswer: ${userAnswer.toInt()} -- ${currentEquation.answer} ")
         if (userAnswer.toInt() == currentEquation.answer) {
             val updatedExp = _uiSessionState.value.exp.plus(EXP_INCREASE)
             updateSessionExp(updatedExp = updatedExp)
@@ -87,9 +96,9 @@ class SessionViewModel : ViewModel() {
                     isCorrect = true
                 )
             }
-            Log.d("asdasd", "userAnswer si : $updatedExp ")
+        } else {
+            updateSessionExp(_uiSessionState.value.exp)
         }
-
         updateUserAnswer("")
     }
 
@@ -97,12 +106,12 @@ class SessionViewModel : ViewModel() {
         Log.d("asdasd", "size number : ${_uiSessionState.value.numberOfExercises}")
         Log.d("asdasd", "size list : ${listExercises.size}")
         if (listExercises.size == _uiSessionState.value.numberOfExercises) {
-             _uiSessionState.update {
-                 it.copy(
-                     exp = updatedExp,
-                     isGameOver = true
-                 )
-             }
+            _uiSessionState.update {
+                it.copy(
+                    exp = updatedExp,
+                    isGameOver = true
+                )
+            }
         } else {
             _uiSessionState.update {
                 it.copy(

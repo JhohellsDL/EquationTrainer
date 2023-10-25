@@ -4,5 +4,7 @@
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
 
-    <string name="instructions">Puedes hacer en hoja.</string>
+    <string name="instructions">Puedes realizar el ejercicio en una hoja de papel.</string>
+    <string name="experience">Exp: %d</string>
+    <string name="difficulty">Dificultad: %s</string>
 </resources>
