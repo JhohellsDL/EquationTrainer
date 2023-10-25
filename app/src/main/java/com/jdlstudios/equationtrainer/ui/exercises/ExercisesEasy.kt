@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -62,16 +63,19 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 @Composable
 fun PreviewDark() {
     AppTheme {
-        ExerciseEasy(viewModel(), rememberNavController())
+        ExerciseEasy(Modifier.fillMaxSize(), viewModel(), rememberNavController())
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ExerciseEasy(
+    modifier: Modifier = Modifier,
     sessionViewModel: SessionViewModel,
     navHostController: NavHostController
 ) {
@@ -82,19 +86,21 @@ fun ExerciseEasy(
     Log.d("asdasd", "Session: $sessionState")
     Log.d("asdasd", "Equation: $equationState")
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
+    Scaffold(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(it),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val difficultyText = DifficultyLevel.values()[1]
             Row(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -122,15 +128,17 @@ fun ExerciseEasy(
                 equationCount = sessionState.currentExerciseCount,
                 isErrorInputText = isErrorInputText
             )
+            Spacer(modifier = modifier.height(32.dp))
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = modifier.fillMaxWidth(),
                     enabled = !isErrorInputText,
                     onClick = {
                         isErrorInputText = true
@@ -145,7 +153,7 @@ fun ExerciseEasy(
 
                 OutlinedButton(
                     onClick = { sessionViewModel.skipEquation() },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "Saltar Pregunta",
@@ -210,10 +218,10 @@ fun CardExercise(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(mediumPadding)
+            modifier = modifier.padding(mediumPadding)
         ) {
             Text(
-                modifier = Modifier
+                modifier = modifier
                     .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.surfaceTint)
                     .padding(horizontal = 10.dp, vertical = 4.dp)
@@ -241,7 +249,7 @@ fun CardExercise(
                 value = userAnswer,
                 singleLine = true,
                 shape = MaterialTheme.shapes.large,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth(),
                 onValueChange = onUserAnswer,
                 label = { Text(text = "Valor de X") },
                 isError = false,
@@ -277,12 +285,12 @@ private fun FinalScoreDialog(
             TextButton(
                 onClick = onExit
             ) {
-                Text(text = "SAlir")
+                Text(text = "Salir")
             }
         },
         confirmButton = {
             TextButton(onClick = onPlayAgain) {
-                Text(text = "otra vez")
+                Text(text = "Otra vez")
             }
         }
     )
@@ -317,14 +325,9 @@ fun SessionExp(exp: Int, modifier: Modifier = Modifier) {
 
 @Composable
 fun SessionDifficulty(difficultyLevel: DifficultyLevel, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .wrapContentWidth(unbounded = true)
-    ) {
-        Text(
-            text = stringResource(R.string.difficulty, difficultyLevel.description),
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(8.dp)
-        )
-    }
+    Text(
+        text = stringResource(R.string.difficulty, difficultyLevel.description),
+        style = MaterialTheme.typography.headlineSmall,
+        modifier = Modifier.padding(8.dp)
+    )
 }

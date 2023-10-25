@@ -48,18 +48,17 @@ fun Preview() {
 
 @Composable
 fun Home(
+    modifier: Modifier = Modifier,
     navHostController: NavHostController
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 32.dp)
-                .background(MaterialTheme.colorScheme.onPrimary)
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

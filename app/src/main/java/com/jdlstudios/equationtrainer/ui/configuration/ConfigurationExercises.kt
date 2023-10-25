@@ -45,6 +45,7 @@ import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 
 @Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Preview
 @Composable
 fun DarkPreview() {
     AppTheme {
@@ -57,6 +58,7 @@ fun DarkPreview() {
 
 @Composable
 fun ConfigurationSession(
+    modifier: Modifier = Modifier,
     sessionViewModel: SessionViewModel,
     navHostController: NavHostController
 ) {
@@ -69,9 +71,8 @@ fun ConfigurationSession(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState(), enabled = true),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
@@ -79,12 +80,12 @@ fun ConfigurationSession(
         ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
+            modifier = modifier
         ) {
             Text(
                 text = "Selecciona el nivel de dificultad",
                 style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
+                modifier = modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(16.dp),
                 textAlign = TextAlign.Center
@@ -99,7 +100,7 @@ fun ConfigurationSession(
                 text = "Selecciona la cantidad de ejercicios",
                 style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
+                modifier = modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 32.dp, bottom = 12.dp)
                     .padding(horizontal = 16.dp)
@@ -111,7 +112,7 @@ fun ConfigurationSession(
             )
         }
         Button(
-            modifier = Modifier
+            modifier = modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 16.dp, vertical = 24.dp)
                 .fillMaxWidth(),
@@ -154,11 +155,11 @@ fun CardDifficulty(
             DifficultyLevel.Advanced
         )
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-        Column(Modifier.selectableGroup()) {
+        Column(modifier.selectableGroup()) {
             radioOptions.forEach {
 
                 Row(
-                    Modifier
+                    modifier
                         .fillMaxWidth()
                         .height(56.dp)
                         .selectable(
@@ -206,7 +207,7 @@ fun CardSelectedQuantity(
             Text(
                 text = sliderPosition.toInt().toString(),
                 style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
+                modifier = modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 32.dp)
             )
