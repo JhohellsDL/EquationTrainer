@@ -84,7 +84,7 @@ fun ConfigurationSession(
         ) {
             Text(
                 text = "Selecciona el nivel de dificultad",
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(16.dp),
@@ -98,7 +98,7 @@ fun ConfigurationSession(
             )
             Text(
                 text = "Selecciona la cantidad de ejercicios",
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
                 modifier = modifier
                     .align(Alignment.CenterHorizontally)
@@ -206,7 +206,7 @@ fun CardSelectedQuantity(
         Column {
             Text(
                 text = sliderPosition.toInt().toString(),
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 32.dp)
