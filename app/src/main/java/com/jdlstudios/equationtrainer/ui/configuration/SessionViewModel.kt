@@ -44,6 +44,10 @@ class SessionViewModel : ViewModel() {
         Log.d("asdasd", "SessionViewModel - resetSession : list clear, new equation")
     }
 
+    fun cleanSession() {
+        _uiSessionState.value = Session()
+    }
+
     init {
         resetSession()
     }

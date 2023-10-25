@@ -48,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.jdlstudios.equationtrainer.R
+import com.jdlstudios.equationtrainer.domain.models.Session
 import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
@@ -160,10 +161,13 @@ fun ExerciseEasy(
                     onPlayAgain = {
                         sessionViewModel.resetSession()
                         sessionViewModel.updateGameOver(false)
+                        sessionViewModel.cleanSession()
                         navHostController.navigateSingleTopTo(ConfigurationSession.route)
                     },
                     onExit = {
                         sessionViewModel.updateGameOver(false)
+                        Log.d("asdasd","SESSION: ${sessionState.toFormattedString()}")
+                        sessionViewModel.cleanSession()
                         navHostController.navigateSingleTopTo(Home.route)
                     }
                 )

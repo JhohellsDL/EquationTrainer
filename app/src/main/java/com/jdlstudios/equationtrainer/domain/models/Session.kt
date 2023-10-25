@@ -27,4 +27,19 @@ data class Session(
             date = date
         )
     }
+
+    fun toFormattedString(): String {
+        return """
+        Session Details:
+        Difficulty: $difficulty
+        Number of Exercises: $numberOfExercises
+        Current Exercise Count: $currentExerciseCount
+        Correct Answers: $correctAnswers
+        Incorrect Answers: $incorrectAnswers
+        Experience Points: $exp
+        Time: $time
+        Date: $date
+        Game Over: $isGameOver
+    """.trimIndent()
+    }
 }
