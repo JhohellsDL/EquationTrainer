@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +45,7 @@ import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
+import java.util.Calendar
 
 @Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Preview
@@ -82,28 +85,12 @@ fun ConfigurationSession(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
         ) {
-            Text(
-                text = "Selecciona el nivel de dificultad",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
-                textAlign = TextAlign.Center
-            )
+
             CardDifficulty(
                 onDifficultyLevel = {
                     sessionViewModel.updateDifficulty(it)
                     Log.d("Configuration", "dificultad : ${it.description}")
                 }
-            )
-            Text(
-                text = "Selecciona la cantidad de ejercicios",
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center,
-                modifier = modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 32.dp, bottom = 12.dp)
-                    .padding(horizontal = 16.dp)
             )
             CardSelectedQuantity(
                 onNumberOfExercises = {
@@ -132,6 +119,7 @@ fun ConfigurationSession(
             nroExercises = uiSessionState.numberOfExercises,
             onPlayAgain = {
                 //guardar la session antes de pasar de pantalla
+                sessionViewModel.updateDateSession(getCurrentDateTime())
                 navHostController.navigateSingleTopTo(ExercisesEasy.route)
             },
             onExit = { isCardVisible = false },
@@ -158,9 +146,24 @@ fun CardDifficulty(
             DifficultyLevel.Advanced
         )
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Selecciona el nivel\n de dificultad",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = modifier
+                    .wrapContentWidth(unbounded = true),
+            )
+            CurrentDateTime()
+        }
+
         Column(modifier.selectableGroup()) {
             radioOptions.forEach {
-
                 Row(
                     modifier
                         .fillMaxWidth()
@@ -205,7 +208,15 @@ fun CardSelectedQuantity(
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         var sliderPosition by remember { mutableFloatStateOf(0f) }
-
+        Text(
+            text = "Selecciona la cantidad de ejercicios",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+            modifier = modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 32.dp, bottom = 12.dp)
+                .padding(horizontal = 16.dp)
+        )
         Column {
             Text(
                 text = sliderPosition.toInt().toString(),
@@ -217,7 +228,7 @@ fun CardSelectedQuantity(
             Slider(
                 modifier = modifier
                     .padding(horizontal = 32.dp)
-                    .padding(vertical = 20.dp),
+                    .padding(vertical = 16.dp),
                 value = sliderPosition,
                 onValueChange = {
                     sliderPosition = it
@@ -274,3 +285,42 @@ private fun PreviewSessionDialog(
     )
 }
 
+@Preview
+@Composable
+fun CurrentDateTime() {
+    val currentCalendar = remember { Calendar.getInstance() }
+    val currentHour = currentCalendar.get(Calendar.HOUR_OF_DAY)
+    val currentMinute = currentCalendar.get(Calendar.MINUTE)
+    val currentSecond = currentCalendar.get(Calendar.SECOND)
+    val currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
+    val currentMonth =
+        currentCalendar.get(Calendar.MONTH) + 1 // Los meses en Calendar comienzan desde 0
+    val currentYear = currentCalendar.get(Calendar.YEAR)
+
+    val currentDateString =
+        "Hora: $currentHour:$currentMinute:$currentSecond\nFecha: $currentDay/$currentMonth/$currentYear"
+
+    Text(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.surfaceTint)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .wrapContentWidth(),
+        text = "Hora: $currentHour:$currentMinute:$currentSecond\nFecha: $currentDay/$currentMonth/$currentYear",
+        color = MaterialTheme.colorScheme.onPrimary
+    )
+
+}
+
+fun getCurrentDateTime(): String {
+    val currentCalendar = Calendar.getInstance()
+    val currentHour = currentCalendar.get(Calendar.HOUR_OF_DAY)
+    val currentMinute = currentCalendar.get(Calendar.MINUTE)
+    val currentSecond = currentCalendar.get(Calendar.SECOND)
+    val currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
+    val currentMonth =
+        currentCalendar.get(Calendar.MONTH) + 1 // Los meses en Calendar comienzan desde 0
+    val currentYear = currentCalendar.get(Calendar.YEAR)
+
+    return "Hora: $currentHour:$currentMinute:$currentSecond\nFecha: $currentDay/$currentMonth/$currentYear"
+}

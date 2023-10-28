@@ -1,8 +1,9 @@
 package com.jdlstudios.equationtrainer.ui.configuration
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -15,8 +16,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.zip
+import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 class SessionViewModel : ViewModel() {
 
     private val _uiSessionState = MutableStateFlow(Session())
@@ -34,13 +36,18 @@ class SessionViewModel : ViewModel() {
     var userAnswer by mutableStateOf("")
         private set
 
-    fun getListEquations(): List<Equation>{
+    var timeStart : Long = 0
+    var timeEnd : Long = 0
+
+    fun getListEquations(): List<Equation> {
         Log.d("asdasd", "LISTA get VIEWMODEL !! :  $currentListExercises")
         return currentListExercises
     }
-    fun getListSession(): List<Session>{
+
+    fun getListSession(): List<Session> {
         return currentListSession
     }
+
     private fun pickRandomEquation(): Equation {
         currentEquation = EquationProvider.generateRandomEquation()
         listExercises.add(currentEquation)
@@ -61,6 +68,7 @@ class SessionViewModel : ViewModel() {
     fun cleanSession() {
         Log.d("asdasd", "lista de ecuacuones: $listExercises")
         _uiSessionState.value = Session()
+        Log.d("qweqweqwe", "SESSION NEW: ${_uiSessionState.value.toFormattedString()}")
     }
 
     init {
@@ -101,6 +109,17 @@ class SessionViewModel : ViewModel() {
         }
     }
 
+    fun updateDateSession(date: String) {
+        val currentCalendar = Calendar.getInstance()
+        timeStart = currentCalendar.timeInMillis
+        Log.d("qweqweqwe", "date 1: ${currentCalendar.timeInMillis}")
+        _uiSessionState.update {
+            it.copy(
+                date = date
+            )
+        }
+    }
+
     fun updateUserAnswer(answer: String) {
         Log.d("ExerciseEasy", "updateUserAnswer: $answer")
         Log.d("asdasd", "update answer: $answer")
@@ -111,6 +130,7 @@ class SessionViewModel : ViewModel() {
     fun checkUserAnswer() {
         if (userAnswer.toInt() == currentEquation.answer) {
             val updatedExp = _uiSessionState.value.exp.plus(EXP_INCREASE)
+            val updateAnswerCorrect = _uiSessionState.value.correctAnswers.plus(1)
             Log.d("ExerciseEasy", "updateUserAnswer: ${userAnswer.toInt()}")
             Log.d("ExerciseEasy", "updateUserAnswer : ${currentEquation.answer}")
             _uiEquationState.update {
@@ -120,15 +140,24 @@ class SessionViewModel : ViewModel() {
                     isCorrect = true
                 )
             }
-            Log.d("ExerciseEasy", "updateUserAnswer bien: ${_uiEquationState.value.toFormattedString()}")
+            Log.d(
+                "ExerciseEasy",
+                "updateUserAnswer bien: ${_uiEquationState.value.toFormattedString()}"
+            )
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.isCorrect}")
             currentListExercises.add(_uiEquationState.value)
+            _uiSessionState.update {
+                it.copy(
+                    correctAnswers = updateAnswerCorrect
+                )
+            }
             updateSessionExp(updatedExp = updatedExp)
 
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.isCorrect}")
         } else {
+            val updateAnswerIncorrect = _uiSessionState.value.incorrectAnswers.plus(1)
             _uiEquationState.update {
                 it.copy(
                     answer = currentEquation.answer,
@@ -136,7 +165,15 @@ class SessionViewModel : ViewModel() {
                 )
             }
             currentListExercises.add(_uiEquationState.value)
-            Log.d("ExerciseEasy", "updateUserAnswer mal: ${_uiEquationState.value.toFormattedString()}")
+            Log.d(
+                "ExerciseEasy",
+                "updateUserAnswer mal: ${_uiEquationState.value.toFormattedString()}"
+            )
+            _uiSessionState.update {
+                it.copy(
+                    incorrectAnswers = updateAnswerIncorrect
+                )
+            }
             updateSessionExp(_uiSessionState.value.exp)
         }
         Log.d("asdasd", "LISTA get VIEWMODEL --- CHECK !! :  $currentListExercises")
@@ -144,6 +181,7 @@ class SessionViewModel : ViewModel() {
         updateUserAnswer("")
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateSessionExp(updatedExp: Int) {
         Log.d("asdasd", "size number : ${_uiSessionState.value.numberOfExercises}")
         Log.d("asdasd", "size list : ${listExercises.size}")
@@ -154,6 +192,18 @@ class SessionViewModel : ViewModel() {
                     isGameOver = true
                 )
             }
+            val currentCalendar = Calendar.getInstance()
+            timeEnd = currentCalendar.timeInMillis
+            val timeBetween = timeEnd - timeStart
+
+            Log.d("qweqweqwe", "Time: $timeBetween")
+            Log.d("qweqweqwe", "timeBetween en hora: ${milisegundosATiempo(timeBetween)} seconds")
+            _uiSessionState.update {
+                it.copy(
+                    time = timeBetween
+                )
+            }
+            Log.d("qweqweqwe", "Session ultima!!! : ${_uiSessionState.value.toFormattedString()}")
             currentListSession.add(_uiSessionState.value)
         } else {
             _uiSessionState.update {
@@ -170,5 +220,26 @@ class SessionViewModel : ViewModel() {
     fun skipEquation() {
         updateSessionExp(_uiSessionState.value.exp)
         updateUserAnswer("")
+    }
+
+    fun milisegundosATiempo(milisegundos: Long): String {
+        val seconds = milisegundos / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val remainingMinutes = minutes % 60
+        val remainingSeconds = seconds % 60
+        return String.format("%02d:%02d:%02d", hours, remainingMinutes, remainingSeconds)
+    }
+    fun getCurrentDateTime(): String {
+        val currentCalendar = Calendar.getInstance()
+        val currentHour = currentCalendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = currentCalendar.get(Calendar.MINUTE)
+        val currentSecond = currentCalendar.get(Calendar.SECOND)
+        val currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
+        val currentMonth =
+            currentCalendar.get(Calendar.MONTH) + 1 // Los meses en Calendar comienzan desde 0
+        val currentYear = currentCalendar.get(Calendar.YEAR)
+
+        return "Hora: $currentHour:$currentMinute:$currentSecond\nFecha: $currentDay/$currentMonth/$currentYear"
     }
 }
