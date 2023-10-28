@@ -23,11 +23,13 @@ import com.jdlstudios.equationtrainer.ui.configuration.ConfigurationSession
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.exercises.ExerciseEasy
 import com.jdlstudios.equationtrainer.ui.history.EquationsHistoryScreen
+import com.jdlstudios.equationtrainer.ui.history.SessionHistoryScreen
 import com.jdlstudios.equationtrainer.ui.home.Home
 import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
 import com.jdlstudios.equationtrainer.ui.navigation.EquationsHistory
 import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 import com.jdlstudios.equationtrainer.ui.navigation.Home
+import com.jdlstudios.equationtrainer.ui.navigation.SessionsHistory
 import com.jdlstudios.equationtrainer.ui.navigation.appTabRowScreens
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 
@@ -92,6 +94,12 @@ fun EquationApp() {
                 }
                 composable(route = EquationsHistory.route) {
                     EquationsHistoryScreen(
+                        sessionViewModel = sessionViewModel,
+                        navHostController = navController
+                    )
+                }
+                composable(route = SessionsHistory.route) {
+                    SessionHistoryScreen(
                         sessionViewModel = sessionViewModel,
                         navHostController = navController
                     )

@@ -26,6 +26,7 @@ class SessionViewModel : ViewModel() {
     val uiEquationState: StateFlow<Equation> = _uiEquationState.asStateFlow()
 
     private var currentListExercises: MutableList<Equation> = mutableListOf()
+    private var currentListSession: MutableList<Session> = mutableListOf()
     private lateinit var currentEquation: Equation
 
     private var listExercises: MutableList<Equation> = mutableListOf()
@@ -36,6 +37,9 @@ class SessionViewModel : ViewModel() {
     fun getListEquations(): List<Equation>{
         Log.d("asdasd", "LISTA get VIEWMODEL !! :  $currentListExercises")
         return currentListExercises
+    }
+    fun getListSession(): List<Session>{
+        return currentListSession
     }
     private fun pickRandomEquation(): Equation {
         currentEquation = EquationProvider.generateRandomEquation()
@@ -150,6 +154,7 @@ class SessionViewModel : ViewModel() {
                     isGameOver = true
                 )
             }
+            currentListSession.add(_uiSessionState.value)
         } else {
             _uiSessionState.update {
                 it.copy(
