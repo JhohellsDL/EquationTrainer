@@ -1,8 +1,10 @@
 package com.jdlstudios.equationtrainer
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -20,14 +22,17 @@ import com.jdlstudios.equationtrainer.components.AppTabRow
 import com.jdlstudios.equationtrainer.ui.configuration.ConfigurationSession
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.exercises.ExerciseEasy
+import com.jdlstudios.equationtrainer.ui.history.EquationsHistoryScreen
 import com.jdlstudios.equationtrainer.ui.home.Home
 import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
+import com.jdlstudios.equationtrainer.ui.navigation.EquationsHistory
 import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 import com.jdlstudios.equationtrainer.ui.navigation.Home
 import com.jdlstudios.equationtrainer.ui.navigation.appTabRowScreens
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -36,6 +41,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -80,6 +86,12 @@ fun EquationApp() {
                 }
                 composable(route = ExercisesEasy.route) {
                     ExerciseEasy(
+                        sessionViewModel = sessionViewModel,
+                        navHostController = navController
+                    )
+                }
+                composable(route = EquationsHistory.route) {
+                    EquationsHistoryScreen(
                         sessionViewModel = sessionViewModel,
                         navHostController = navController
                     )
