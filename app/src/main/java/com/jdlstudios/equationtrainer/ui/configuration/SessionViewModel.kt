@@ -25,13 +25,18 @@ class SessionViewModel : ViewModel() {
     private val _uiEquationState = MutableStateFlow(Equation())
     val uiEquationState: StateFlow<Equation> = _uiEquationState.asStateFlow()
 
-    private lateinit var currentListExercises: MutableList<Equation>
+    private var currentListExercises: MutableList<Equation> = mutableListOf()
     private lateinit var currentEquation: Equation
+
     private var listExercises: MutableList<Equation> = mutableListOf()
 
     var userAnswer by mutableStateOf("")
         private set
 
+    fun getListEquations(): List<Equation>{
+        Log.d("asdasd", "LISTA get VIEWMODEL !! :  $currentListExercises")
+        return currentListExercises
+    }
     private fun pickRandomEquation(): Equation {
         currentEquation = EquationProvider.generateRandomEquation()
         listExercises.add(currentEquation)
@@ -39,8 +44,13 @@ class SessionViewModel : ViewModel() {
     }
 
     fun resetSession() {
+        Log.d("Configuration", "dificultad : ${_uiSessionState.value.toFormattedString()}")
         listExercises.clear()
         _uiEquationState.value = pickRandomEquation()
+
+        Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
+        Log.d("asdasd", "LISTA VIEWMODEL !! :  $listExercises")
+        Log.d("asdasd", "LISTA get VIEWMODEL !! :  $currentListExercises")
         Log.d("asdasd", "SessionViewModel - resetSession : list clear, new equation")
     }
 
@@ -95,15 +105,24 @@ class SessionViewModel : ViewModel() {
     fun checkUserAnswer() {
         if (userAnswer.toInt() == currentEquation.answer) {
             val updatedExp = _uiSessionState.value.exp.plus(EXP_INCREASE)
-            updateSessionExp(updatedExp = updatedExp)
+
             _uiEquationState.update {
                 it.copy(
                     isCorrect = true
                 )
             }
+            Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
+            Log.d("asdasdasd", "update answer: ${_uiEquationState.value.isCorrect}")
+
+            updateSessionExp(updatedExp = updatedExp)
+
+            Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
+            Log.d("asdasdasd", "update answer: ${_uiEquationState.value.isCorrect}")
         } else {
             updateSessionExp(_uiSessionState.value.exp)
         }
+        Log.d("asdasd", "LISTA get VIEWMODEL --- CHECK !! :  $currentListExercises")
+        currentListExercises = listExercises
         updateUserAnswer("")
     }
 

@@ -93,7 +93,7 @@ fun ConfigurationSession(
             CardDifficulty(
                 onDifficultyLevel = {
                     sessionViewModel.updateDifficulty(it)
-                    Log.d("asdasd", "test dent : ${it.description}")
+                    Log.d("Configuration", "dificultad : ${it.description}")
                 }
             )
             Text(
@@ -130,7 +130,10 @@ fun ConfigurationSession(
         PreviewSessionDialog(
             difficulty = DifficultyLevel.values()[uiSessionState.difficulty],
             nroExercises = uiSessionState.numberOfExercises,
-            onPlayAgain = { navHostController.navigateSingleTopTo(ExercisesEasy.route) },
+            onPlayAgain = {
+                //guardar la session antes de pasar de pantalla
+                navHostController.navigateSingleTopTo(ExercisesEasy.route)
+            },
             onExit = { isCardVisible = false },
             navHostController = navHostController
         )
@@ -167,7 +170,7 @@ fun CardDifficulty(
                             onClick = {
                                 onOptionSelected(it)
                                 onDifficultyLevel(it)
-                                Log.d("asdasd", "test1 : ${it.description}")
+                                Log.d("Configuration", "dificultad : ${it.description}")
                             },
                             role = Role.RadioButton
                         )
@@ -219,6 +222,7 @@ fun CardSelectedQuantity(
                 onValueChange = {
                     sliderPosition = it
                     onNumberOfExercises(it.toInt())
+                    Log.d("Configuration", "cantidad : ${it.toInt()}")
                 },
                 steps = 18,
                 valueRange = 0f..20f
