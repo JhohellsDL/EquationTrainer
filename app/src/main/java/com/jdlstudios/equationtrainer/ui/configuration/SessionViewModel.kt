@@ -98,31 +98,45 @@ class SessionViewModel : ViewModel() {
     }
 
     fun updateUserAnswer(answer: String) {
+        Log.d("ExerciseEasy", "updateUserAnswer: $answer")
         Log.d("asdasd", "update answer: $answer")
         userAnswer = answer
+        Log.d("ExerciseEasy", "updateUserAnswer : $userAnswer")
     }
 
     fun checkUserAnswer() {
         if (userAnswer.toInt() == currentEquation.answer) {
             val updatedExp = _uiSessionState.value.exp.plus(EXP_INCREASE)
-
+            Log.d("ExerciseEasy", "updateUserAnswer: ${userAnswer.toInt()}")
+            Log.d("ExerciseEasy", "updateUserAnswer : ${currentEquation.answer}")
             _uiEquationState.update {
                 it.copy(
+                    answer = currentEquation.answer,
+                    answerUser = userAnswer.toInt(),
                     isCorrect = true
                 )
             }
+            Log.d("ExerciseEasy", "updateUserAnswer bien: ${_uiEquationState.value.toFormattedString()}")
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.isCorrect}")
-
+            currentListExercises.add(_uiEquationState.value)
             updateSessionExp(updatedExp = updatedExp)
 
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.isCorrect}")
         } else {
+            _uiEquationState.update {
+                it.copy(
+                    answer = currentEquation.answer,
+                    answerUser = userAnswer.toInt()
+                )
+            }
+            currentListExercises.add(_uiEquationState.value)
+            Log.d("ExerciseEasy", "updateUserAnswer mal: ${_uiEquationState.value.toFormattedString()}")
             updateSessionExp(_uiSessionState.value.exp)
         }
         Log.d("asdasd", "LISTA get VIEWMODEL --- CHECK !! :  $currentListExercises")
-        currentListExercises = listExercises
+        //currentListExercises = listExercises
         updateUserAnswer("")
     }
 
@@ -143,6 +157,7 @@ class SessionViewModel : ViewModel() {
                     currentExerciseCount = it.currentExerciseCount.inc()
                 )
             }
+            //reinicia la ecuacion
             _uiEquationState.value = pickRandomEquation()
         }
     }

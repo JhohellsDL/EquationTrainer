@@ -83,6 +83,7 @@ fun ExerciseEasy(
     val sessionState by sessionViewModel.uiSessionState.collectAsState()
     var isErrorInputText by remember { mutableStateOf(true) }
 
+    Log.d("ExerciseEasy", "Creacion Screen: ${equationState.toFormattedString()}")
     Log.d("asdasd", "Session: $sessionState")
     Log.d("asdasd", "Equation: $equationState")
 
@@ -90,11 +91,11 @@ fun ExerciseEasy(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-    ) {
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .verticalScroll(rememberScrollState())
-                .padding(it),
+                .padding(innerPadding),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -120,6 +121,7 @@ fun ExerciseEasy(
                 },
                 onKeyboardDone = {
                     isErrorInputText = true
+                    Log.d("ExerciseEasy", "Button Keyboard Continuar: ${equationState.toFormattedString()}")
                     sessionViewModel.checkUserAnswer()
                 },
                 userAnswer = sessionViewModel.userAnswer,
@@ -142,6 +144,7 @@ fun ExerciseEasy(
                     enabled = !isErrorInputText,
                     onClick = {
                         isErrorInputText = true
+                        Log.d("ExerciseEasy", "Button Continuar: ${equationState.toFormattedString()}")
                         sessionViewModel.checkUserAnswer()
                     }
                 ) {
@@ -152,7 +155,10 @@ fun ExerciseEasy(
                 }
 
                 OutlinedButton(
-                    onClick = { sessionViewModel.skipEquation() },
+                    onClick = {
+                        Log.d("ExerciseEasy", "Skip equation: ${equationState.toFormattedString()}")
+                        sessionViewModel.skipEquation()
+                              },
                     modifier = modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -166,7 +172,6 @@ fun ExerciseEasy(
                 FinalScoreDialog(
                     exp = sessionState.exp,
                     onPlayAgain = {
-                        sessionViewModel.resetSession()
                         sessionViewModel.updateGameOver(false)
                         sessionViewModel.cleanSession()
                         navHostController.navigateSingleTopTo(ConfigurationSession.route)
