@@ -20,4 +20,16 @@ data class Equation(
             isCorrect = isCorrect
         )
     }
+
+    fun toFormattedString(): String {
+        return """
+        Equation Details:
+        Equation: $equation
+        Answer: $answer
+        Answer User: $answerUser
+        Time: $time
+        Date: $date
+        Is Correct: $isCorrect
+    """.trimIndent()
+    }
 }
