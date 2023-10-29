@@ -1,9 +1,7 @@
 package com.jdlstudios.equationtrainer.ui.configuration
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.jdlstudios.equationtrainer.R
 import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
@@ -72,7 +72,7 @@ fun ConfigurationSession(
     val uiSessionState by sessionViewModel.uiSessionState.collectAsState()
 
     var isCardVisible by remember { mutableStateOf(false) }
-    var isEnabledButton: Boolean = false
+    var isEnabledButton = false
     if (uiSessionState.numberOfExercises != 0) {
         isEnabledButton = true
     }
@@ -93,7 +93,6 @@ fun ConfigurationSession(
             CardDifficulty(
                 onDifficultyLevel = {
                     sessionViewModel.updateDifficulty(it)
-                    Log.d("Configuration", "dificultad : ${it.description}")
                 }
             )
             CardSelectedQuantity(
@@ -113,7 +112,7 @@ fun ConfigurationSession(
             },
             enabled = isEnabledButton
         ) {
-            Text(text = "COMENZAR")
+            Text(text = stringResource(R.string.comenzar_button_text))
         }
     }
 
@@ -121,13 +120,11 @@ fun ConfigurationSession(
         PreviewSessionDialog(
             difficulty = DifficultyLevel.values()[uiSessionState.difficulty],
             nroExercises = uiSessionState.numberOfExercises,
-            onPlayAgain = {
-                //guardar la session antes de pasar de pantalla
+            onContinue = {
                 sessionViewModel.updateDateSession(getCurrentDateTime())
                 navHostController.navigateSingleTopTo(ExercisesEasy.route)
             },
-            onExit = { isCardVisible = false },
-            navHostController = navHostController
+            onExit = { isCardVisible = false }
         )
     }
 }
@@ -158,7 +155,7 @@ fun CardDifficulty(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Selecciona el nivel\n de dificultad",
+                text = stringResource(R.string.description_level),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = modifier
                     .wrapContentWidth(unbounded = true),
@@ -177,7 +174,6 @@ fun CardDifficulty(
                             onClick = {
                                 onOptionSelected(it)
                                 onDifficultyLevel(it)
-                                Log.d("Configuration", "dificultad : ${it.description}")
                             },
                             role = Role.RadioButton
                         )
@@ -213,7 +209,7 @@ fun CardSelectedQuantity(
     ) {
         var sliderPosition by remember { mutableFloatStateOf(0f) }
         Text(
-            text = "Selecciona la cantidad de ejercicios",
+            text = stringResource(R.string.description_quantity),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             modifier = modifier
@@ -237,7 +233,6 @@ fun CardSelectedQuantity(
                 onValueChange = {
                     sliderPosition = it
                     onNumberOfExercises(it.toInt())
-                    Log.d("Configuration", "cantidad : ${it.toInt()}")
                 },
                 steps = 18,
                 valueRange = 0f..20f
@@ -248,13 +243,12 @@ fun CardSelectedQuantity(
 
 @Preview
 @Composable
-fun previewAlert2() {
+fun PreviewAlert2() {
     PreviewSessionDialog(
         difficulty = DifficultyLevel.Advanced,
         nroExercises = 2,
-        onPlayAgain = {},
-        onExit = { },
-        navHostController = rememberNavController()
+        onContinue = {},
+        onExit = { }
     )
 }
 
@@ -262,28 +256,35 @@ fun previewAlert2() {
 private fun PreviewSessionDialog(
     difficulty: DifficultyLevel,
     nroExercises: Int,
-    onPlayAgain: () -> Unit,
+    onContinue: () -> Unit,
     onExit: () -> Unit,
-    navHostController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     AlertDialog(
         onDismissRequest = onExit,
-        title = { Text(text = "Estas iniciando una session!") },
-        text = { Text(text = "Dificultad: ${difficulty.description} \nNumero de ejercicios: $nroExercises") },
+        title = { Text(text = stringResource(R.string.description_alert)) },
+        text = {
+            Text(
+                text = stringResource(
+                    R.string.description_session_preview,
+                    difficulty.description,
+                    nroExercises
+                )
+            )
+        },
         modifier = modifier,
         dismissButton = {
             TextButton(
                 onClick = onExit
             ) {
-                Text(text = "Salir")
+                Text(text = stringResource(R.string.salir_text))
             }
         },
         confirmButton = {
             TextButton(
-                onClick = onPlayAgain
+                onClick = onContinue
             ) {
-                Text(text = "Continuar")
+                Text(text = stringResource(R.string.continuar_text))
             }
         }
     )
@@ -298,11 +299,8 @@ fun CurrentDateTime() {
     val currentSecond = currentCalendar.get(Calendar.SECOND)
     val currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
     val currentMonth =
-        currentCalendar.get(Calendar.MONTH) + 1 // Los meses en Calendar comienzan desde 0
+        currentCalendar.get(Calendar.MONTH) + 1
     val currentYear = currentCalendar.get(Calendar.YEAR)
-
-    val currentDateString =
-        "Hora: $currentHour:$currentMinute:$currentSecond\nFecha: $currentDay/$currentMonth/$currentYear"
 
     Text(
         modifier = Modifier
@@ -310,7 +308,15 @@ fun CurrentDateTime() {
             .background(MaterialTheme.colorScheme.surfaceTint)
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .wrapContentWidth(),
-        text = "Hora: $currentHour:$currentMinute:$currentSecond\nFecha: $currentDay/$currentMonth/$currentYear",
+        text = stringResource(
+            R.string.hora_fecha,
+            currentHour,
+            currentMinute,
+            currentSecond,
+            currentDay,
+            currentMonth,
+            currentYear
+        ),
         color = MaterialTheme.colorScheme.onPrimary
     )
 
@@ -323,7 +329,7 @@ fun getCurrentDateTime(): String {
     val currentSecond = currentCalendar.get(Calendar.SECOND)
     val currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
     val currentMonth =
-        currentCalendar.get(Calendar.MONTH) + 1 // Los meses en Calendar comienzan desde 0
+        currentCalendar.get(Calendar.MONTH) + 1
     val currentYear = currentCalendar.get(Calendar.YEAR)
 
     return "Hora: $currentHour:$currentMinute:$currentSecond\nFecha: $currentDay/$currentMonth/$currentYear"

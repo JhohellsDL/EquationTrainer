@@ -9,4 +9,12 @@
     <string name="difficulty">Dificultad: %s</string>
     <string name="description_app">Aquí puedes practicar tus habilidades matemáticas resolviendo ecuaciones de diferentes tipos.</string>
     <string name="button_start_home">Empezar sesión</string>
+    <string name="comenzar_button_text">Comenzar a practicar</string>
+    <string name="description_level">Selecciona el nivel\nde dificultad</string>
+    <string name="description_quantity">Selecciona la cantidad de ejercicios</string>
+    <string name="description_alert">Estas iniciando una session!</string>
+    <string name="description_session_preview">Dificultad: %1$s \nNumero de ejercicios: %2$s</string>
+    <string name="salir_text">Salir</string>
+    <string name="continuar_text">Continuar</string>
+    <string name="hora_fecha">Hora: %1$s:%2$s:%3$s\nFecha: %4$s/%5$s/%6$s</string>
 </resources>
