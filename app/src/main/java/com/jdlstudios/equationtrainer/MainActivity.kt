@@ -94,14 +94,12 @@ fun EquationApp() {
                 }
                 composable(route = EquationsHistory.route) {
                     EquationsHistoryScreen(
-                        sessionViewModel = sessionViewModel,
-                        navHostController = navController
+                        sessionViewModel = sessionViewModel
                     )
                 }
                 composable(route = SessionsHistory.route) {
                     SessionHistoryScreen(
-                        sessionViewModel = sessionViewModel,
-                        navHostController = navController
+                        sessionViewModel = sessionViewModel
                     )
                 }
             }

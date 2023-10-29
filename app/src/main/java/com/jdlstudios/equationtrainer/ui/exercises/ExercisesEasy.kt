@@ -2,7 +2,6 @@ package com.jdlstudios.equationtrainer.ui.exercises
 
 import android.content.res.Configuration
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,13 +26,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,7 +48,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.jdlstudios.equationtrainer.R
-import com.jdlstudios.equationtrainer.domain.models.Session
 import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
@@ -82,11 +78,6 @@ fun ExerciseEasy(
     val equationState by sessionViewModel.uiEquationState.collectAsState()
     val sessionState by sessionViewModel.uiSessionState.collectAsState()
     var isErrorInputText by remember { mutableStateOf(true) }
-
-    Log.d("ExerciseEasy", "Creacion Screen: ${equationState.toFormattedString()}")
-    Log.d("asdasd", "Session: $sessionState")
-    Log.d("asdasd", "Equation: $equationState")
-
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -121,7 +112,6 @@ fun ExerciseEasy(
                 },
                 onKeyboardDone = {
                     isErrorInputText = true
-                    Log.d("ExerciseEasy", "Button Keyboard Continuar: ${equationState.toFormattedString()}")
                     sessionViewModel.checkUserAnswer()
                 },
                 userAnswer = sessionViewModel.userAnswer,
@@ -144,21 +134,19 @@ fun ExerciseEasy(
                     enabled = !isErrorInputText,
                     onClick = {
                         isErrorInputText = true
-                        Log.d("ExerciseEasy", "Button Continuar: ${equationState.toFormattedString()}")
                         sessionViewModel.checkUserAnswer()
                     }
                 ) {
                     Text(
-                        text = "Continuar",
+                        text = "Comprobar",
                         fontSize = 16.sp
                     )
                 }
 
                 OutlinedButton(
                     onClick = {
-                        Log.d("ExerciseEasy", "Skip equation: ${equationState.toFormattedString()}")
                         sessionViewModel.skipEquation()
-                              },
+                    },
                     modifier = modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -178,7 +166,6 @@ fun ExerciseEasy(
                     },
                     onExit = {
                         sessionViewModel.updateGameOver(false)
-                        Log.d("asdasd", "SESSION: ${sessionState.toFormattedString()}")
                         sessionViewModel.cleanSession()
                         navHostController.navigateSingleTopTo(Home.route)
                     }
