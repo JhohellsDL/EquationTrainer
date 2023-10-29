@@ -7,4 +7,6 @@
     <string name="instructions">Puedes realizar el ejercicio en una hoja de papel.</string>
     <string name="experience">Exp: %d</string>
     <string name="difficulty">Dificultad: %s</string>
+    <string name="description_app">Aquí puedes practicar tus habilidades matemáticas resolviendo ecuaciones de diferentes tipos.</string>
+    <string name="button_start_home">Empezar sesión</string>
 </resources>
