@@ -36,8 +36,8 @@ class SessionViewModel : ViewModel() {
     var userAnswer by mutableStateOf("")
         private set
 
-    var timeStart : Long = 0
-    var timeEnd : Long = 0
+    var timeStart: Long = 0
+    var timeEnd: Long = 0
 
     fun getListEquations(): List<Equation> {
         Log.d("asdasd", "LISTA get VIEWMODEL !! :  $currentListExercises")
@@ -91,11 +91,20 @@ class SessionViewModel : ViewModel() {
         }
     }
 
-    fun updateTime(time: Long) {
+    fun updateTimeEquation(time: Long) {
         Log.d("asdasd", "updateTtime: $time")
         _uiEquationState.update {
             it.copy(
                 time = time
+            )
+        }
+    }
+
+    fun updateDateEquation(date: String) {
+        Log.d("asdasd", "updateTdate: $date")
+        _uiEquationState.update {
+            it.copy(
+                date = date
             )
         }
     }
@@ -146,7 +155,16 @@ class SessionViewModel : ViewModel() {
             )
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.equation}")
             Log.d("asdasdasd", "update answer: ${_uiEquationState.value.isCorrect}")
+            val currentCalendar = Calendar.getInstance()
+            timeEnd = currentCalendar.timeInMillis
+            val timeBetween = timeEnd - timeStart
+            updateTimeEquation(timeBetween)
+            updateDateEquation(getCurrentDateTime())
+
+            Log.d("qweqweqwe", "EQUATION ultima!!! : ${_uiEquationState.value.toFormattedString()}")
+
             currentListExercises.add(_uiEquationState.value)
+
             _uiSessionState.update {
                 it.copy(
                     correctAnswers = updateAnswerCorrect
@@ -164,7 +182,6 @@ class SessionViewModel : ViewModel() {
                     answerUser = userAnswer.toInt()
                 )
             }
-            currentListExercises.add(_uiEquationState.value)
             Log.d(
                 "ExerciseEasy",
                 "updateUserAnswer mal: ${_uiEquationState.value.toFormattedString()}"
@@ -174,6 +191,15 @@ class SessionViewModel : ViewModel() {
                     incorrectAnswers = updateAnswerIncorrect
                 )
             }
+            val currentCalendar = Calendar.getInstance()
+            timeEnd = currentCalendar.timeInMillis
+            val timeBetween = timeEnd - timeStart
+            updateTimeEquation(timeBetween)
+            updateDateEquation(getCurrentDateTime())
+
+            Log.d("qweqweqwe", "EQUATION ultima!!! : ${_uiEquationState.value.toFormattedString()}")
+
+            currentListExercises.add(_uiEquationState.value)
             updateSessionExp(_uiSessionState.value.exp)
         }
         Log.d("asdasd", "LISTA get VIEWMODEL --- CHECK !! :  $currentListExercises")
@@ -212,7 +238,7 @@ class SessionViewModel : ViewModel() {
                     currentExerciseCount = it.currentExerciseCount.inc()
                 )
             }
-            //reinicia la ecuacion
+           //reinicia la ecuacion
             _uiEquationState.value = pickRandomEquation()
         }
     }
@@ -230,6 +256,7 @@ class SessionViewModel : ViewModel() {
         val remainingSeconds = seconds % 60
         return String.format("%02d:%02d:%02d", hours, remainingMinutes, remainingSeconds)
     }
+
     fun getCurrentDateTime(): String {
         val currentCalendar = Calendar.getInstance()
         val currentHour = currentCalendar.get(Calendar.HOUR_OF_DAY)
