@@ -64,7 +64,7 @@ fun Home(
         ) {
             Text(
                 text = "Equation Trainer",
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 72.dp)
             )
