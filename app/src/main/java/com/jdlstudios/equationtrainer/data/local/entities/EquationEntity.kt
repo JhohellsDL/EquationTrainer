@@ -11,7 +11,7 @@ data class EquationEntity (
     val equation: String,
     val answer: Int,
     val answerUser: Int,
-    val time: Int,
+    val time: Long,
     val date: String,
     val isCorrect: Boolean
 ) {

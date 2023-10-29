@@ -1,9 +1,12 @@
 package com.jdlstudios.equationtrainer.ui.history
 
+import android.os.Build
 import android.util.Log
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -30,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,11 +46,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.jdlstudios.equationtrainer.R
 import com.jdlstudios.equationtrainer.domain.models.Equation
+import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun ScreenContentPreview() {
@@ -57,6 +64,7 @@ fun ScreenContentPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EquationsHistoryScreen(
     modifier: Modifier = Modifier,
@@ -73,8 +81,10 @@ fun EquationsHistoryScreen(
 @Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
 @Composable
 fun AlignYourBodyRowPreview() {
-    AppTheme { AlignYourBodyRow(
-        listaEquations = listEquationsTest)
+    AppTheme {
+        AlignYourBodyRow(
+            listaEquations = listEquationsTest
+        )
     }
 }
 
@@ -83,24 +93,24 @@ private val listEquationsTest = listOf<Equation>(
         equation = "3x + 3 = 3",
         answer = 2,
         answerUser = 4,
-        time = 100,
-        date = "27 Octubre 2023 - 15:30:09",
+        time = 100L,
+        date = "Hora: 16:14:29\nFecha: 28/10/2023",
         isCorrect = false
     ),
     Equation(
         equation = "2x + 3 = 3",
         answer = 2,
         answerUser = 4,
-        time = 100,
-        date = "27 Octubre 2023 - 15:30:09",
+        time = 100L,
+        date = "Hora: 16:14:29\nFecha: 28/10/2023",
         isCorrect = false
     ),
     Equation(
         equation = "1x + 3 = 3",
         answer = 2,
         answerUser = 4,
-        time = 100,
-        date = "27 Octubre 2023 - 15:30:09",
+        time = 100L,
+        date = "Hora: 16:14:29\nFecha: 28/10/2023",
         isCorrect = false
     )
 
@@ -118,7 +128,7 @@ fun AlignYourBodyRow(
         contentPadding = PaddingValues(vertical = 16.dp),
         modifier = modifier
     ) {
-        if (listaEquations.isEmpty()){
+        if (listaEquations.isEmpty()) {
 
         } else {
             items(listaEquations) {
@@ -135,34 +145,72 @@ fun FavoriteCollectionCard(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 12.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Equation: ${equation.equation}",
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Fecha: ${equation.date}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Respuesta Usuario: X = ${equation.answerUser}",
-                style = MaterialTheme.typography.titleSmall
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "${equation.isCorrect}",
-                style = MaterialTheme.typography.titleMedium
-            )
+            Column(
+                modifier = modifier
+                    .weight(3f)
+                    .padding(12.dp)
+            ) {
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = equation.equation,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = "Tiempo: ${milisegundosATiempo(equation.time)}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = "Respuesta Usuario: ${equation.answerUser}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Respuesta: ${equation.answer}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            Column(
+                modifier = modifier
+                    .weight(2f)
+                    .padding(horizontal = 12.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colorScheme.onSecondaryContainer),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                var isCorrectText = "Incorrecto"
+                if (equation.isCorrect) isCorrectText = "Correcto"
+                Text(
+                    modifier = modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceTint)
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .align(alignment = Alignment.End),
+                    text = isCorrectText,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    text = equation.date,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = modifier
+                        .padding(8.dp)
+                        .wrapContentSize(),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
         }
     }
     // Implement composable here 017085605
@@ -178,7 +226,7 @@ fun FavoriteCollectionCardPreview() {
                 answer = 2,
                 answerUser = 4,
                 time = 100,
-                date = "27 Octubre 2023 - 15:30:09",
+                date = "Hora: 16:14:29\nFecha: 28/10/2023",
                 isCorrect = false
             ),
             modifier = Modifier.padding(8.dp)

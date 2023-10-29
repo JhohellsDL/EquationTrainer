@@ -91,7 +91,7 @@ class SessionViewModel : ViewModel() {
         }
     }
 
-    fun updateTime(time: Int) {
+    fun updateTime(time: Long) {
         Log.d("asdasd", "updateTtime: $time")
         _uiEquationState.update {
             it.copy(
