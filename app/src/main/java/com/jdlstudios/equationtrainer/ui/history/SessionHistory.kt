@@ -1,20 +1,34 @@
 package com.jdlstudios.equationtrainer.ui.history
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,8 +41,8 @@ import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 
-
-@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
 @Composable
 fun ScreenPreview() {
     AppTheme {
@@ -39,6 +53,7 @@ fun ScreenPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SessionHistoryScreen(
     modifier: Modifier = Modifier,
@@ -48,13 +63,15 @@ fun SessionHistoryScreen(
     val uiSessionState by sessionViewModel.uiSessionState.collectAsState()
     val listCurrent = sessionViewModel.getListSession()
     Log.d("asdasd", "LISTAAAAAAASADSADAS !! :  $listCurrent")
-    SessionRow(
-        listSessions = listCurrent
-    )
+    AppTheme {
+        SessionRow(
+            listSessions = listCurrent
+        )
+    }
     // Implement composable here
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
+@Preview
 @Composable
 fun RowPreview() {
     AppTheme {
@@ -71,7 +88,7 @@ private val listSessionsTest = listOf<Session>(
         correctAnswers = 2,
         incorrectAnswers = 3,
         exp = 44,
-        date = "27 Octubre 2023 - 15:30:09"
+        date = "Hora: 16:14:29\nFecha: 28/10/2023"
     ),
     Session(
         difficulty = 0,
@@ -79,7 +96,7 @@ private val listSessionsTest = listOf<Session>(
         correctAnswers = 2,
         incorrectAnswers = 3,
         exp = 44,
-        date = "27 Octubre 2023 - 15:30:09"
+        date = "Hora: 16:14:29\nFecha: 28/10/2023"
     ),
     Session(
         difficulty = 3,
@@ -87,7 +104,7 @@ private val listSessionsTest = listOf<Session>(
         correctAnswers = 2,
         incorrectAnswers = 3,
         exp = 44,
-        date = "27 Octubre 2023 - 15:30:09"
+        date = "Hora: 16:14:29\nFecha: 28/10/2023"
     )
 
 )
@@ -100,7 +117,7 @@ fun SessionRow(
 ) {
     Log.d("asdasd", "LISTA fasdfa !! :  $listSessions")
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(vertical = 16.dp),
         modifier = modifier
     ) {
@@ -121,50 +138,82 @@ fun SessionItemCard(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 12.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Fecha: ${session.date}",
-                style = MaterialTheme.typography.titleSmall
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Dificultad de la sesion: ${DifficultyLevel.values()[session.difficulty]}",
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Numero de ejercicios: ${session.numberOfExercises}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Respuestas correctas ${session.correctAnswers}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Respuestas incorrectas ${session.incorrectAnswers}",
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                modifier = Modifier.padding(start = 12.dp),
-                text = "Experiencia: ${session.exp}",
-                style = MaterialTheme.typography.titleMedium
-            )
+            Column(
+                modifier = modifier
+                    .weight(3f)
+                    .padding(12.dp)
+            ) {
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = "Sesion: ${DifficultyLevel.values()[session.difficulty]}",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = "Tiempo: ${milisegundosATiempo(session.time)}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = "Nro de ejercicios: ${session.numberOfExercises}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Respuestas correctas ${session.correctAnswers}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Respuestas incorrectas ${session.incorrectAnswers}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+            }
+            Column(
+                modifier = modifier
+                    .weight(2f)
+                    .padding(horizontal = 12.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colorScheme.onSecondaryContainer),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    modifier = modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceTint)
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .align(alignment = Alignment.End),
+                    text = "Exp: ${session.exp}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    text = session.date,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = modifier
+                        .padding(8.dp)
+                        .wrapContentSize(),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
         }
     }
     // Implement composable here 017085605
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF5F0EE)
+@Preview
 @Composable
 fun CollectionCardPreview() {
     AppTheme {
@@ -175,9 +224,18 @@ fun CollectionCardPreview() {
                 correctAnswers = 2,
                 incorrectAnswers = 3,
                 exp = 44,
-                date = "27 Octubre 2023 - 15:30:09"
+                date = "Hora: 16:14:29\nFecha: 28/10/2023"
             ),
             modifier = Modifier.padding(8.dp)
         )
     }
+}
+
+fun milisegundosATiempo(milisegundos: Long): String {
+    val seconds = milisegundos / 1000
+    val minutes = seconds / 60
+    val hours = minutes / 60
+    val remainingMinutes = minutes % 60
+    val remainingSeconds = seconds % 60
+    return String.format("%02d:%02d:%02d", hours, remainingMinutes, remainingSeconds)
 }

@@ -1,6 +1,8 @@
 package com.jdlstudios.equationtrainer.ui.configuration
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +49,7 @@ import com.jdlstudios.equationtrainer.ui.navigation.ExercisesEasy
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Preview
 @Composable
@@ -59,6 +62,7 @@ fun DarkPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ConfigurationSession(
     modifier: Modifier = Modifier,
