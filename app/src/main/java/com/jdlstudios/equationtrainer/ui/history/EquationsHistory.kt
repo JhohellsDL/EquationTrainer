@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,9 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.jdlstudios.equationtrainer.domain.models.Equation
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
@@ -91,17 +98,24 @@ fun AlignYourBodyRow(
     modifier: Modifier = Modifier,
     listaEquations: List<Equation>
 ) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 16.dp),
+    Column(
         modifier = modifier
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (listaEquations.isNotEmpty()) {
-            items(listaEquations) {
-                FavoriteCollectionCard(equation = it)
+        AnuncioSuperiorEquation()
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(vertical = 16.dp),
+            modifier = modifier
+        ) {
+            if (listaEquations.isNotEmpty()) {
+                items(listaEquations) {
+                    FavoriteCollectionCard(equation = it)
+                }
             }
-        }
 
+        }
     }
 }
 
@@ -198,4 +212,19 @@ fun FavoriteCollectionCardPreview() {
             modifier = Modifier.padding(8.dp)
         )
     }
+}
+
+@Composable
+fun AnuncioSuperiorEquation() {
+    val adWith = LocalConfiguration.current.screenWidthDp - 32
+    AndroidView(
+        factory = {
+            val adView = AdView(it)
+            adView.setAdSize(AdSize(adWith, 50))
+            adView.apply {
+                adUnitId = "ca-app-pub-8897050281816485/8741360603"
+                loadAd(AdRequest.Builder().build())
+            }
+        }
+    )
 }
