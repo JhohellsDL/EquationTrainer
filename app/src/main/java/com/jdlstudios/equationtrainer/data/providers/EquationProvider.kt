@@ -19,8 +19,10 @@ class EquationProvider {
             val x = (1..MAX_VALUE).random()
 
             val c = a * x + b
-            val equation = when (type == 1) {
-                true -> if (b < 0) "${a}x - ${b.absoluteValue} = $c" else "$b + ${a}x = $c"
+            val equation = when (type) {
+                1 -> if (b < 0) "${a}x - ${b.absoluteValue} = $c" else "$b + ${a}x = $c"
+                2 -> if (b < 0) "$c = ${a}x - ${b.absoluteValue}" else "$c = $b + ${a}x"
+                3 -> "$c = $b + ${a}x"
                 else -> "$b + ${a}x = $c"
             }
 
