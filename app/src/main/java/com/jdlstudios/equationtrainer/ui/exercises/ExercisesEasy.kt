@@ -2,7 +2,9 @@ package com.jdlstudios.equationtrainer.ui.exercises
 
 import android.content.res.Configuration
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import com.jdlstudios.equationtrainer.R
 import com.jdlstudios.equationtrainer.domain.models.EquationFractionTypeOne
 import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
+import com.jdlstudios.equationtrainer.domain.utils.Utilities.solutionEquation
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
@@ -82,6 +86,7 @@ fun ExerciseEasy(
     val equationFraction by sessionViewModel.uiEquationFractionState.collectAsState()
     val sessionState by sessionViewModel.uiSessionState.collectAsState()
     var isErrorInputText by remember { mutableStateOf(true) }
+    var helpSolution by remember { mutableStateOf(false) }
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -124,6 +129,7 @@ fun ExerciseEasy(
                 equationCount = sessionState.currentExerciseCount,
                 difficulty = sessionState.difficulty,
                 equationFraction = equationFraction,
+                helpSolutionActive = { helpSolution = true },
                 isErrorInputText = isErrorInputText
             )
             Spacer(modifier = modifier.height(32.dp))
@@ -177,6 +183,14 @@ fun ExerciseEasy(
                     }
                 )
             }
+
+            if (helpSolution) {
+                HelpDialog(
+                    equationFraction = equationFraction,
+                    onPlayAgain = { /*TODO*/ },
+                    onExit = { helpSolution = false }
+                )
+            }
         }
     }
 }
@@ -208,6 +222,7 @@ fun CardExercise(
     isErrorInputText: Boolean,
     difficulty: Int,
     equationFraction: EquationFractionTypeOne,
+    helpSolutionActive: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val mediumPadding = 16.dp
@@ -291,6 +306,24 @@ fun CardExercise(
                 modifier = modifier
                     .padding(vertical = 16.dp)
             )
+            when (difficulty) {
+                0 -> {
+
+                }
+
+                1 -> {
+                    Button(onClick = helpSolutionActive) {
+                        Text(text = "Mostrar solución")
+                        Image(
+                            modifier = modifier.padding(start = 4.dp),
+                            painter = painterResource(R.drawable.baseline_ondemand_video_24),
+                            contentDescription = ""
+                        )
+                        Log.d("qweqweqwe", "presionado Help!!")
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = userAnswer,
                 singleLine = true,
@@ -339,6 +372,53 @@ private fun FinalScoreDialog(
                 Text(text = "Otra vez")
             }
         }
+    )
+}
+
+@Composable
+private fun HelpDialog(
+    equationFraction: EquationFractionTypeOne,
+    onPlayAgain: () -> Unit,
+    onExit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AlertDialog(
+        onDismissRequest = onExit,
+        title = {
+            Text(
+                style = MaterialTheme.typography.displayMedium,
+                text = "Solución"
+            )
+        },
+        text = {
+            Text(
+                text = solutionEquation(equationFraction)
+            )
+        },
+        modifier = modifier.wrapContentWidth(unbounded = true),
+        dismissButton = {
+            TextButton(
+                onClick = onExit
+            ) {
+                Text(text = "Cerrar")
+            }
+        },
+        confirmButton = {},
+        tonalElevation = 4.dp
+    )
+}
+
+@Preview
+@Composable
+fun PreviewHelps() {
+    HelpDialog(equationFraction = EquationFractionTypeOne(
+        partNumberFraction = Pair(4, 6),
+        variable = 9,
+        independentTerm = 7,
+        result = 13
+    ),
+        onPlayAgain = { /*TODO*/ },
+        onExit = { /*TODO*/ }
     )
 }
 

@@ -143,8 +143,8 @@ fun CardDifficulty(
         val radioOptions = listOf(
             DifficultyLevel.Easy,
             DifficultyLevel.Intermediate,
-            DifficultyLevel.Challenge,
-            DifficultyLevel.Advanced
+            //DifficultyLevel.Challenge,
+            //DifficultyLevel.Advanced
         )
         val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
         Row(
