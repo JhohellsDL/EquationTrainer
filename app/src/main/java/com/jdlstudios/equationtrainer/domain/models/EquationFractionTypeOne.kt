@@ -1,13 +1,22 @@
 package com.jdlstudios.equationtrainer.domain.models
 
-import com.jdlstudios.equationtrainer.data.local.entities.EquationEntity
-
 data class EquationFractionTypeOne(
-    val partNumberFraction: Pair<Int, Int>,
-    val variable: Int,
-    val independentTerm: Int,
-    val result: Int
+    val partNumberFraction: Pair<Int, Int> = Pair(0, 0),
+    val variable: Int = 0,
+    val independentTerm: Int = 0,
+    val result: Int = 0
 ) {
+
+    fun toEquation(): Equation {
+        return Equation(
+            equation = "(${partNumberFraction.first}/${partNumberFraction.second})x + $independentTerm = $result",
+            answer = variable,
+            answerUser = 0,
+            time = 0L,
+            date = "",
+            isCorrect = false
+        )
+    }
 
     fun toStringFraction(): String {
         return "(${partNumberFraction.first}/${partNumberFraction.second})x + $independentTerm = $result"

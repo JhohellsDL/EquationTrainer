@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,6 +22,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -48,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.jdlstudios.equationtrainer.R
+import com.jdlstudios.equationtrainer.domain.models.EquationFractionTypeOne
 import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
@@ -76,6 +79,7 @@ fun ExerciseEasy(
     navHostController: NavHostController
 ) {
     val equationState by sessionViewModel.uiEquationState.collectAsState()
+    val equationFraction by sessionViewModel.uiEquationFractionState.collectAsState()
     val sessionState by sessionViewModel.uiSessionState.collectAsState()
     var isErrorInputText by remember { mutableStateOf(true) }
     Scaffold(
@@ -118,6 +122,8 @@ fun ExerciseEasy(
                 currentEquation = equationState.equation,
                 numberOfExercises = sessionState.numberOfExercises,
                 equationCount = sessionState.currentExerciseCount,
+                difficulty = sessionState.difficulty,
+                equationFraction = equationFraction,
                 isErrorInputText = isErrorInputText
             )
             Spacer(modifier = modifier.height(32.dp))
@@ -200,6 +206,8 @@ fun CardExercise(
     numberOfExercises: Int,
     equationCount: Int,
     isErrorInputText: Boolean,
+    difficulty: Int,
+    equationFraction: EquationFractionTypeOne,
     modifier: Modifier = Modifier
 ) {
     val mediumPadding = 16.dp
@@ -223,13 +231,59 @@ fun CardExercise(
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Timer()
-            Text(
-                text = currentEquation,
-                style = MaterialTheme.typography.displayMedium,
-                modifier = modifier
-                    .padding(vertical = 24.dp),
-                color = MaterialTheme.colorScheme.tertiary
-            )
+            when (difficulty) {
+                0 -> {
+                    Text(
+                        text = currentEquation,
+                        style = MaterialTheme.typography.displayMedium,
+                        modifier = modifier
+                            .padding(top = 24.dp),
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                }
+
+                1 -> {
+                    val numerator = equationFraction.partNumberFraction.first
+                    val denominator = equationFraction.partNumberFraction.second
+                    val independentTerm = equationFraction.independentTerm
+                    val result = equationFraction.result
+                    Row {
+                        Column {
+                            Text(
+                                text = numerator.toString(),//currentEquation
+                                style = MaterialTheme.typography.displayMedium,
+                                modifier = modifier
+                                    .padding(top = 24.dp),
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                            Divider(
+                                modifier = modifier
+                                    .width(30.dp),
+                                thickness = 2.dp,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                            Text(
+                                text = denominator.toString(),
+                                style = MaterialTheme.typography.displayMedium,
+                                modifier = modifier,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        }
+                        Text(
+                            text = "x + $independentTerm = $result",//currentEquation
+                            style = MaterialTheme.typography.displayMedium,
+                            modifier = modifier
+                                .padding(vertical = 24.dp),
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
+
+                2 -> {}
+                3 -> {}
+            }
+
+
             Text(
                 text = stringResource(R.string.instructions),
                 textAlign = TextAlign.Center,
@@ -289,19 +343,6 @@ private fun FinalScoreDialog(
 }
 
 @Composable
-fun PreviewStatus() {
-    Row(
-        modifier = Modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        SessionDifficulty(difficultyLevel = DifficultyLevel.Challenge)
-        SessionExp(exp = 12)
-    }
-
-}
-
-@Composable
 fun SessionExp(exp: Int, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
@@ -316,7 +357,9 @@ fun SessionExp(exp: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SessionDifficulty(difficultyLevel: DifficultyLevel, modifier: Modifier = Modifier) {
+fun SessionDifficulty(
+    difficultyLevel: DifficultyLevel
+) {
     Text(
         text = stringResource(R.string.difficulty, difficultyLevel.description),
         style = MaterialTheme.typography.headlineSmall,
