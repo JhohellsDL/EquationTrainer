@@ -1,5 +1,6 @@
 package com.jdlstudios.equationtrainer
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -38,16 +39,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            EquationApp()
+            EquationApp(this)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun EquationApp() {
+fun EquationApp(context: Context) {
     AppTheme {
         val sessionViewModel: SessionViewModel = viewModel()
         val navController = rememberNavController()
@@ -89,7 +89,8 @@ fun EquationApp() {
                 composable(route = ExercisesEasy.route) {
                     ExerciseEasy(
                         sessionViewModel = sessionViewModel,
-                        navHostController = navController
+                        navHostController = navController,
+                        context = context
                     )
                 }
                 composable(route = EquationsHistory.route) {

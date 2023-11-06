@@ -1,5 +1,7 @@
 package com.jdlstudios.equationtrainer.ui.exercises
 
+import android.app.Activity
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
@@ -49,9 +51,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.OnUserEarnedRewardListener
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.rewarded.ServerSideVerificationOptions
 import com.jdlstudios.equationtrainer.R
 import com.jdlstudios.equationtrainer.domain.models.EquationFractionTypeOne
 import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
@@ -60,7 +68,6 @@ import com.jdlstudios.equationtrainer.navigateSingleTopTo
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
 import com.jdlstudios.equationtrainer.ui.navigation.ConfigurationSession
 import com.jdlstudios.equationtrainer.ui.navigation.Home
-import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -69,9 +76,6 @@ import java.time.format.DateTimeFormatter
 @Preview
 @Composable
 fun PreviewDark() {
-    AppTheme {
-        ExerciseEasy(Modifier.fillMaxSize(), viewModel(), rememberNavController())
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,13 +84,55 @@ fun PreviewDark() {
 fun ExerciseEasy(
     modifier: Modifier = Modifier,
     sessionViewModel: SessionViewModel,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    context: Context
 ) {
+
     val equationState by sessionViewModel.uiEquationState.collectAsState()
     val equationFraction by sessionViewModel.uiEquationFractionState.collectAsState()
     val sessionState by sessionViewModel.uiSessionState.collectAsState()
     var isErrorInputText by remember { mutableStateOf(true) }
     var helpSolution by remember { mutableStateOf(false) }
+    var buttonActive by remember { mutableStateOf(false) }
+
+    var mInterstitialAd: InterstitialAd? = null
+    var rewardedAd: RewardedAd? = null
+    val adRequest = AdRequest.Builder().build()
+
+    InterstitialAd.load(
+        context,
+        "ca-app-pub-3940256099942544/1033173712",
+        adRequest,
+        object : InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                mInterstitialAd = null
+            }
+
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                mInterstitialAd = interstitialAd
+
+            }
+        })
+    RewardedAd.load(
+        context,
+        "ca-app-pub-3940256099942544/5224354917",
+        adRequest,
+        object : RewardedAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                rewardedAd = null
+            }
+
+            override fun onAdLoaded(ad: RewardedAd) {
+                buttonActive = true
+                rewardedAd = ad
+
+                val options = ServerSideVerificationOptions.Builder()
+                    .setCustomData("SAMPLE_CUSTOM_DATA_STRING")
+                    .build()
+                rewardedAd!!.setServerSideVerificationOptions(options)
+            }
+        })
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
@@ -129,7 +175,19 @@ fun ExerciseEasy(
                 equationCount = sessionState.currentExerciseCount,
                 difficulty = sessionState.difficulty,
                 equationFraction = equationFraction,
-                helpSolutionActive = { helpSolution = true },
+                helpSolutionActive = {
+
+                    rewardedAd?.let { ad ->
+                        ad.show(context as Activity, OnUserEarnedRewardListener { rewardItem ->
+                            // Handle the reward.
+                            val rewardAmount = rewardItem.amount
+                            val rewardType = rewardItem.type
+                        })
+                    } ?: run {}
+
+                    helpSolution = true
+                },
+                buttonActive = buttonActive,
                 isErrorInputText = isErrorInputText
             )
             Spacer(modifier = modifier.height(32.dp))
@@ -169,6 +227,9 @@ fun ExerciseEasy(
             }
 
             if (sessionState.isGameOver) {
+                if (mInterstitialAd != null) {
+                    mInterstitialAd?.show(context as Activity)
+                }
                 FinalScoreDialog(
                     exp = sessionState.exp,
                     onPlayAgain = {
@@ -188,7 +249,28 @@ fun ExerciseEasy(
                 HelpDialog(
                     equationFraction = equationFraction,
                     onPlayAgain = { /*TODO*/ },
-                    onExit = { helpSolution = false }
+                    onExit = {
+                        RewardedAd.load(
+                            context,
+                            "ca-app-pub-3940256099942544/5224354917",
+                            adRequest,
+                            object : RewardedAdLoadCallback() {
+                                override fun onAdFailedToLoad(adError: LoadAdError) {
+                                    rewardedAd = null
+                                }
+
+                                override fun onAdLoaded(ad: RewardedAd) {
+                                    buttonActive = true
+                                    rewardedAd = ad
+
+                                    val options = ServerSideVerificationOptions.Builder()
+                                        .setCustomData("SAMPLE_CUSTOM_DATA_STRING")
+                                        .build()
+                                    rewardedAd!!.setServerSideVerificationOptions(options)
+                                }
+                            })
+                        helpSolution = false
+                    }
                 )
             }
         }
@@ -223,6 +305,7 @@ fun CardExercise(
     difficulty: Int,
     equationFraction: EquationFractionTypeOne,
     helpSolutionActive: () -> Unit,
+    buttonActive: Boolean,
     modifier: Modifier = Modifier
 ) {
     val mediumPadding = 16.dp
@@ -312,7 +395,10 @@ fun CardExercise(
                 }
 
                 1 -> {
-                    Button(onClick = helpSolutionActive) {
+                    Button(
+                        onClick = helpSolutionActive,
+                        enabled = buttonActive
+                    ) {
                         Text(text = "Mostrar solución")
                         Image(
                             modifier = modifier.padding(start = 4.dp),
