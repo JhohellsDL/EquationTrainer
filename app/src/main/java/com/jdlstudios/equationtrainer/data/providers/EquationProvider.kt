@@ -1,6 +1,8 @@
 package com.jdlstudios.equationtrainer.data.providers
 
 import com.jdlstudios.equationtrainer.domain.models.Equation
+import com.jdlstudios.equationtrainer.domain.models.EquationFractionTypeOne
+import com.jdlstudios.equationtrainer.domain.utils.Utilities.fractionNumberRandom
 import kotlin.math.absoluteValue
 
 
@@ -19,8 +21,10 @@ class EquationProvider {
             val x = (1..MAX_VALUE).random()
 
             val c = a * x + b
-            val equation = when (type == 1) {
-                true -> if (b < 0) "${a}x - ${b.absoluteValue} = $c" else "$b + ${a}x = $c"
+            val equation = when (type) {
+                1 -> if (b < 0) "${a}x - ${b.absoluteValue} = $c" else "$b + ${a}x = $c"
+                2 -> if (b < 0) "$c = ${a}x - ${b.absoluteValue}" else "$c = $b + ${a}x"
+                3 -> "$c = $b + ${a}x"
                 else -> "$b + ${a}x = $c"
             }
 
@@ -32,6 +36,28 @@ class EquationProvider {
                 date = "",
                 isCorrect = false
             )
+        }
+
+        fun generateRandomEquationFraction(): EquationFractionTypeOne {
+            var equation: EquationFractionTypeOne
+
+            do {
+                val x = (1..10).random()
+                val fractionPair = fractionNumberRandom()
+                val numerator = fractionPair.first
+                val denominator = fractionPair.second
+                val independentTerm = (1..10).random()
+                val result = ((numerator * x).toFloat() / denominator) + independentTerm
+
+                equation = EquationFractionTypeOne(
+                    partNumberFraction = fractionPair,
+                    variable = x,
+                    independentTerm = independentTerm,
+                    result = result.toInt()
+                )
+            } while ((result % 1) != 0f)
+
+            return equation
         }
     }
 

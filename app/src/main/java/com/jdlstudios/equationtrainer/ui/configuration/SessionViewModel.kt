@@ -1,6 +1,7 @@
 package com.jdlstudios.equationtrainer.ui.configuration
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import com.jdlstudios.equationtrainer.data.providers.EquationProvider
 import com.jdlstudios.equationtrainer.domain.models.EXP_INCREASE
 import com.jdlstudios.equationtrainer.domain.models.Equation
+import com.jdlstudios.equationtrainer.domain.models.EquationFractionTypeOne
 import com.jdlstudios.equationtrainer.domain.models.Session
 import com.jdlstudios.equationtrainer.domain.utils.DifficultyLevel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +27,10 @@ class SessionViewModel : ViewModel() {
 
     private val _uiEquationState = MutableStateFlow(Equation())
     val uiEquationState: StateFlow<Equation> = _uiEquationState.asStateFlow()
+
+    private val _uiEquationFractionState = MutableStateFlow(EquationFractionTypeOne())
+    val uiEquationFractionState: StateFlow<EquationFractionTypeOne> =
+        _uiEquationFractionState.asStateFlow()
 
     private var currentListExercises: MutableList<Equation> = mutableListOf()
     private var currentListSession: MutableList<Session> = mutableListOf()
@@ -52,9 +58,17 @@ class SessionViewModel : ViewModel() {
         return currentEquation
     }
 
+    private fun pickRandomEquationFraction(): Equation {
+        val equationFraction = EquationProvider.generateRandomEquationFraction()
+        _uiEquationFractionState.value = equationFraction
+        currentEquation = equationFraction.toEquation()
+        listExercises.add(currentEquation)
+        return currentEquation
+    }
+
     fun resetSession() {
         listExercises.clear()
-        _uiEquationState.value = pickRandomEquation()
+        selectEquationBasedOnDifficulty()
     }
 
     fun cleanSession() {
@@ -98,6 +112,7 @@ class SessionViewModel : ViewModel() {
     }
 
     fun updateNumberExercises(numberExercises: Int) {
+        Log.d("qweqweqwe", "numberexercises update: $numberExercises")
         _uiSessionState.update {
             it.copy(
                 numberOfExercises = numberExercises
@@ -196,7 +211,22 @@ class SessionViewModel : ViewModel() {
                     currentExerciseCount = it.currentExerciseCount.inc()
                 )
             }
-            _uiEquationState.value = pickRandomEquation()
+            selectEquationBasedOnDifficulty()
+        }
+    }
+
+    private fun selectEquationBasedOnDifficulty() {
+        when (_uiSessionState.value.difficulty) {
+            0 -> {
+                _uiEquationState.value = pickRandomEquation()
+            }
+
+            1 -> {
+                _uiEquationState.value = pickRandomEquationFraction()
+            }
+
+            2 -> {}
+            3 -> {}
         }
     }
 

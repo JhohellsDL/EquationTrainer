@@ -1,6 +1,6 @@
 package com.jdlstudios.equationtrainer
 
-import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -49,7 +48,6 @@ class MainActivity : ComponentActivity() {
 
         InterstitialAd.load(this,"ca-app-pub-8897050281816485/9904616074", adRequest, object : InterstitialAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                adError.toString().let { Log.d(TAG, it) }
                 mInterstitialAd = null
             }
 
@@ -59,16 +57,15 @@ class MainActivity : ComponentActivity() {
             }
         })
         setContent {
-            EquationApp()
+            EquationApp(this)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun EquationApp() {
+fun EquationApp(context: Context) {
     AppTheme {
         val sessionViewModel: SessionViewModel = viewModel()
         val navController = rememberNavController()
@@ -110,7 +107,8 @@ fun EquationApp() {
                 composable(route = ExercisesEasy.route) {
                     ExerciseEasy(
                         sessionViewModel = sessionViewModel,
-                        navHostController = navController
+                        navHostController = navController,
+                        context = context
                     )
                 }
                 composable(route = EquationsHistory.route) {
