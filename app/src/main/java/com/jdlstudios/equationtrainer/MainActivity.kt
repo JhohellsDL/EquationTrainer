@@ -3,7 +3,6 @@ package com.jdlstudios.equationtrainer
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -19,10 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.jdlstudios.equationtrainer.components.AppTabRow
 import com.jdlstudios.equationtrainer.ui.configuration.ConfigurationSession
 import com.jdlstudios.equationtrainer.ui.configuration.SessionViewModel
@@ -39,23 +34,9 @@ import com.jdlstudios.equationtrainer.ui.navigation.appTabRowScreens
 import com.jdlstudios.equationtrainer.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
-    private var mInterstitialAd: InterstitialAd? = null
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val adRequest = AdRequest.Builder().build()
-
-        InterstitialAd.load(this,"ca-app-pub-8897050281816485/9904616074", adRequest, object : InterstitialAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                mInterstitialAd = null
-            }
-
-            override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                mInterstitialAd = interstitialAd
-                mInterstitialAd?.show(this@MainActivity)
-            }
-        })
         setContent {
             EquationApp(this)
         }
