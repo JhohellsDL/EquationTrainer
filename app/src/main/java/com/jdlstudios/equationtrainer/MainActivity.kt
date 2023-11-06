@@ -54,7 +54,6 @@ class MainActivity : ComponentActivity() {
             }
 
             override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                Log.d(TAG, "Ad was loaded.")
                 mInterstitialAd = interstitialAd
                 mInterstitialAd?.show(this@MainActivity)
             }
