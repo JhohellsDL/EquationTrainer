@@ -50,7 +50,7 @@ object Utilities {
 
         text += "\t\tx = $newR"
 
-        //mostrar resultado
+        //mostrar result
         return text
     }
 
